@@ -377,10 +377,8 @@
 
     <section id="pricing" class="section">
         <div class="section-header"><h2>Simple Pricing</h2><p>Affordable notes for every BHMS student.</p></div>
-        <div class="pricing-grid">
-            <div class="pricing-card"><h3>Single Subject</h3><div class="pricing-amount">&#8377;499<span>/subject</span></div><ul class="pricing-features"><li>One subject complete notes</li><li>PDF access for 1 year</li><li>Mobile-friendly viewer</li><li>Email-based access</li></ul><button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="openModal('register')">Get Started</button></div>
-            <div class="pricing-card popular"><h3>All-Access Bundle</h3><div class="pricing-amount">&#8377;2,499<span>/year</span></div><ul class="pricing-features"><li>All BHMS subjects included</li><li>Lifetime updates</li><li>Priority support</li><li>Clinical cases included</li><li>MD prep material</li></ul><button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="openModal('register')">Buy Now</button></div>
-            <div class="pricing-card"><h3>MD Preparation</h3><div class="pricing-amount">&#8377;3,999<span>/year</span></div><ul class="pricing-features"><li>All BHMS notes</li><li>MD entrance material</li><li>Previous year papers</li><li>Revision shortcuts</li><li>1-on-1 guidance</li></ul><button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="openModal('register')">Get Started</button></div>
+        <div class="pricing-grid" id="pricingGrid">
+            <div class="pricing-card"><h3>Loading...</h3></div>
         </div>
     </section>
 
@@ -466,6 +464,7 @@
                 <button class="admin-sidebar-item" onclick="switchAdminTab('users',this)">&#x1F465; Users <span class="badge-count" id="sidebarUserCount">0</span></button>
                 <button class="admin-sidebar-item" onclick="switchAdminTab('orders',this)">&#x1F9FE; Orders <span class="badge-count" id="sidebarOrderCount">0</span></button>
                 <button class="admin-sidebar-item" onclick="switchAdminTab('enrollments',this)">&#x1F393; Enrollments</button>
+                <button class="admin-sidebar-item" onclick="switchAdminTab('pricing',this)">&#x1F4B0; Pricing Plans</button>
                 <div class="admin-sidebar-label">System</div>
                 <button class="admin-sidebar-item" onclick="switchAdminTab('settings',this)">&#x2699;&#xFE0F; Settings</button>
                 <div class="admin-sidebar-footer">HealthIQ Admin v2.0<br>Last sync: <span id="lastSyncTime">just now</span></div>
@@ -618,6 +617,66 @@
         const wa=document.querySelector('.whatsapp-float'); if(wa) wa.href='https://wa.me/'+waNum;
         const fe=document.getElementById('footerEmail'); if(fe){fe.href='mailto:'+email; fe.textContent=email;}
         const fw=document.getElementById('footerWhatsapp'); if(fw){fw.href='https://wa.me/'+waNum; fw.textContent='WhatsApp: +'+waNum.slice(0,2)+' '+waNum.slice(2,7)+' '+waNum.slice(7);}
+        // Render pricing plans
+        renderPricingPlans();
+    }
+
+    // ===== PRICING PLANS =====
+    const DEFAULT_PLANS = [
+        {title:'Single Subject',price:499,original_price:999,period:'/subject',features:['One subject complete notes','PDF access for 1 year','Mobile-friendly viewer','Email-based access'],is_popular:false,links:[{name:'Subject Notes',url:''}]},
+        {title:'All-Access Bundle',price:2499,original_price:4999,period:'/year',features:['All BHMS subjects included','Lifetime updates','Priority support','Clinical cases included','MD prep material'],is_popular:true,links:[{name:'Anatomy',url:''},{name:'Physiology',url:''},{name:'Materia Medica',url:''},{name:'Organon',url:''},{name:'Repertory',url:''}]},
+        {title:'MD Preparation',price:3999,original_price:6999,period:'/year',features:['All BHMS notes','MD entrance material','Previous year papers','Revision shortcuts','1-on-1 guidance'],is_popular:false,links:[{name:'MD Organon',url:''},{name:'MD Materia Medica',url:''},{name:'MD Repertory',url:''},{name:'Previous Papers',url:''}]}
+    ];
+
+    function getPlan(i) {
+        const key='plan_'+(i+1);
+        try { if(APP.settings[key]) return JSON.parse(APP.settings[key]); } catch(e){}
+        return DEFAULT_PLANS[i];
+    }
+
+    function renderPricingPlans() {
+        const grid=document.getElementById('pricingGrid'); if(!grid) return;
+        const plans=[getPlan(0),getPlan(1),getPlan(2)];
+        // Find matching courses for plans (by slug)
+        grid.innerHTML=plans.map((p,i)=>{
+            const slug='pricing-plan-'+(i+1);
+            const course=APP.courses.find(c=>c.slug===slug);
+            const courseId=course?course.id:null;
+            const enrolled=courseId&&APP.myEnrollments.find(e=>String(e.course_id)===String(courseId)&&e.status==='active');
+            const existingOrder=courseId&&APP.currentUser&&APP.orders?.find(o=>String(o.course_id)===String(courseId));
+            const pendingOrder=existingOrder&&existingOrder.status==='pending'?existingOrder:null;
+            const approvedOrder=existingOrder&&(existingOrder.status==='approved'||existingOrder.status==='completed')?existingOrder:null;
+
+            let btn='';
+            if(enrolled||approvedOrder) btn='<button class="btn btn-success" style="width:100%;justify-content:center;" onclick="openPlanNotes('+i+')">📄 Open Notes</button>';
+            else if(pendingOrder) btn='<button class="btn btn-ghost" style="width:100%;justify-content:center;" disabled>⏳ Awaiting Approval</button>';
+            else if(courseId) btn='<button class="btn '+(p.is_popular?'btn-primary':'btn-outline')+'" style="width:100%;justify-content:center;" onclick="buyPlan('+i+',\''+courseId+'\')">'+( p.is_popular?'Buy Now':'Get Started')+'</button>';
+            else btn='<button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="openModal(\'register\')">Get Started</button>';
+
+            return '<div class="pricing-card'+(p.is_popular?' popular':'')+'">'+
+                (enrolled||approvedOrder?'<div style="position:absolute;top:12px;right:12px;background:var(--success);color:#fff;padding:0.2rem 0.6rem;border-radius:6px;font-size:0.7rem;font-weight:700;">✓ ENROLLED</div>':'')+
+                '<h3>'+Utils.escapeHtml(p.title)+'</h3>'+
+                '<div class="pricing-amount">'+Utils.formatCurrency(p.price)+'<span>'+Utils.escapeHtml(p.period||'')+'</span></div>'+
+                (p.original_price?'<p style="text-decoration:line-through;color:var(--gray-600);font-size:0.85rem;margin-top:-0.5rem;margin-bottom:0.5rem;">'+Utils.formatCurrency(p.original_price)+'</p>':'')+
+                '<ul class="pricing-features">'+p.features.map(f=>'<li>'+Utils.escapeHtml(f)+'</li>').join('')+'</ul>'+
+                btn+'</div>';
+        }).join('');
+    }
+
+    function buyPlan(planIdx, courseId) {
+        if(!APP.currentUser){openModal('login');showToast('Please login first','warning');return;}
+        const plan=getPlan(planIdx);
+        enrollCourse(courseId, plan.title, plan.price);
+    }
+
+    function openPlanNotes(planIdx) {
+        const plan=getPlan(planIdx);
+        const links=plan.links||[];
+        const validLinks=links.filter(l=>l.url&&l.url.trim());
+        if(!validLinks.length){showToast('Notes links not configured yet. Contact admin.','warning');return;}
+        let m=document.getElementById('planNotesModal'); if(!m){m=document.createElement('div');m.id='planNotesModal';m.className='modal-overlay';document.body.appendChild(m);}
+        m.innerHTML='<div class="modal" style="max-width:450px;text-align:center;"><button class="modal-close" onclick="document.getElementById(\'planNotesModal\').classList.remove(\'active\')">&times;</button><h2>📚 '+Utils.escapeHtml(plan.title)+'</h2><p class="modal-subtitle">Click on a subject to open notes</p><div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:1.5rem;">'+validLinks.map(l=>'<a href="'+Utils.escapeHtml(l.url)+'" target="_blank" rel="noopener" class="btn btn-primary" style="justify-content:center;text-decoration:none;">📄 '+Utils.escapeHtml(l.name)+'</a>').join('')+'</div></div>';
+        m.classList.add('active');
     }
 
     // ===== DATA =====
@@ -625,11 +684,10 @@
         if (!isSupabaseConfigured()) return;
         try {
             let q = db.from('courses').select('*').order('created_at', {ascending:false});
-            if (!APP.currentUser || APP.currentUser.role !== 'admin') q = q.eq('is_published', true);
             const { data, error } = await q; if(error) throw error;
             APP.courses = data || [];
         } catch(e) { console.error(e); APP.courses = []; }
-        renderCourses();
+        renderCourses(); renderPricingPlans();
     }
     async function fetchUsers() { if(!isSupabaseConfigured()) return; try { const {data}=await db.from('profiles').select('*').order('created_at',{ascending:false}); APP.users=data||[]; const {data:e}=await db.from('enrollments').select('*, profiles(full_name,email), courses(title,category,price)').order('enrolled_at',{ascending:false}); APP.enrollments=e||[]; } catch(e){} }
     async function fetchOrders() { if(!isSupabaseConfigured()) return; try { const {data,error}=await db.from('orders').select('*, profiles(full_name,email), courses(title,category)').order('created_at',{ascending:false}); if(error){console.error('fetchOrders error:',error);showToast('Orders fetch error: '+error.message,'error');} APP.orders=data||[]; } catch(e){console.error('fetchOrders:',e);} }
@@ -697,7 +755,7 @@
 
     // ===== RENDER =====
     function renderCourses() {
-        const grid=document.getElementById('courseGrid'), list=APP.courses.filter(c=>c.is_published!==false);
+        const grid=document.getElementById('courseGrid'), list=APP.courses.filter(c=>c.is_published!==false&&!(c.slug||'').startsWith('pricing-plan-'));
         if(!list.length){grid.innerHTML='<div class="empty-state"><p>No courses available yet.</p></div>';return;}
         grid.innerHTML=list.map(c=>{
             const t=Utils.escapeHtml(c.title),d=Utils.escapeHtml(c.description||c.short_description||''),icon=Utils.escapeHtml(c.icon||'\u{1F4DA}'),badge=Utils.escapeHtml(c.badge||''),cat=Utils.escapeHtml(c.category||'');
@@ -718,7 +776,7 @@
     async function openAdminPanel() { if(!APP.currentUser||APP.currentUser.role!=='admin'){showToast('Access denied','error');return;} document.getElementById('adminPanel').classList.add('active'); document.getElementById('userMenu').classList.remove('active'); document.getElementById('adminUserLabel').textContent=APP.currentUser.name; renderAdminCourses(); try{ await Promise.all([fetchCourses(),fetchUsers(),fetchOrders(),fetchSettings()]); updateSidebarCounts(); renderAdminCourses(); }catch(e){ console.error('Admin fetch error:',e); } }
     function closeAdminPanel() { document.getElementById('adminPanel').classList.remove('active'); }
     function updateSidebarCounts() { const cc=document.getElementById('sidebarCourseCount'),uc=document.getElementById('sidebarUserCount'),oc=document.getElementById('sidebarOrderCount'); if(cc)cc.textContent=APP.courses.length; if(uc)uc.textContent=APP.users.length; if(oc)oc.textContent=APP.orders.length; document.getElementById('lastSyncTime').textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
-    function switchAdminTab(tab,el) { document.querySelectorAll('.admin-sidebar-item').forEach(i=>i.classList.remove('active')); if(el)el.classList.add('active'); ({dashboard:renderAdminDashboard,courses:renderAdminCourses,users:renderAdminUsers,orders:renderAdminOrders,enrollments:renderAdminEnrollments,settings:renderAdminSettings})[tab]?.(); }
+    function switchAdminTab(tab,el) { document.querySelectorAll('.admin-sidebar-item').forEach(i=>i.classList.remove('active')); if(el)el.classList.add('active'); ({dashboard:renderAdminDashboard,courses:renderAdminCourses,users:renderAdminUsers,orders:renderAdminOrders,enrollments:renderAdminEnrollments,pricing:renderAdminPricing,settings:renderAdminSettings})[tab]?.(); }
 
     // Confirm dialog helper
     function adminConfirm(msg,onYes) { const o=document.createElement('div'); o.className='modal-overlay active'; o.style.zIndex='5000'; o.innerHTML='<div class="modal" style="max-width:380px;text-align:center;"><h2 style="font-size:1.2rem;margin-bottom:0.5rem;">Confirm Action</h2><p style="color:var(--gray-600);font-size:0.9rem;margin-bottom:1.5rem;">'+msg+'</p><div style="display:flex;gap:0.75rem;"><button class="btn btn-outline" style="flex:1;justify-content:center;" id="acCancel">Cancel</button><button class="btn btn-danger" style="flex:1;justify-content:center;" id="acConfirm">Confirm</button></div></div>'; document.body.appendChild(o); o.querySelector('#acCancel').onclick=()=>o.remove(); o.querySelector('#acConfirm').onclick=()=>{o.remove();onYes();}; o.addEventListener('click',e=>{if(e.target===o)o.remove();}); }
@@ -781,6 +839,67 @@
         document.getElementById('adminContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;"><div><h2 style="font-size:1.4rem;font-weight:800;">Enrollments</h2><p style="font-size:0.85rem;color:var(--gray-600);">'+APP.enrollments.length+' total enrollments</p></div><input type="text" class="search-input" placeholder="Search..." oninput="filterAdminEnrollments(this.value)"></div><div class="admin-table-wrapper"><table class="admin-table"><thead><tr><th>Student</th><th>Course</th><th>Category</th><th>Price Paid</th><th>Status</th><th>Enrolled On</th></tr></thead><tbody id="adminEnrollBody">'+(APP.enrollments.length?APP.enrollments.map(e=>'<tr><td>'+Utils.escapeHtml(e.profiles?.full_name||e.profiles?.email||'')+'</td><td><strong>'+Utils.escapeHtml(e.courses?.title||'')+'</strong></td><td>'+Utils.escapeHtml(e.courses?.category||'')+'</td><td>'+Utils.formatCurrency(e.courses?.price||0)+'</td><td><span class="status-badge status-active">'+Utils.escapeHtml(e.status||'active')+'</span></td><td>'+Utils.formatDate(e.enrolled_at)+'</td></tr>').join(''):'<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">&#x1F393;</div><h3>No enrollments yet</h3><p>Enrollments appear when students purchase courses.</p></div></td></tr>')+'</tbody></table></div>';
     }
     function filterAdminEnrollments(q) { q=q.toLowerCase(); const filtered=APP.enrollments.filter(e=>((e.profiles?.full_name||'')+' '+(e.courses?.title||'')).toLowerCase().includes(q)); document.getElementById('adminEnrollBody').innerHTML=filtered.map(e=>'<tr><td>'+Utils.escapeHtml(e.profiles?.full_name||'')+'</td><td><strong>'+Utils.escapeHtml(e.courses?.title||'')+'</strong></td><td>'+Utils.escapeHtml(e.courses?.category||'')+'</td><td>'+Utils.formatCurrency(e.courses?.price||0)+'</td><td><span class="status-badge status-active">'+Utils.escapeHtml(e.status||'active')+'</span></td><td>'+Utils.formatDate(e.enrolled_at)+'</td></tr>').join(''); }
+
+    // ===== ADMIN PRICING PLANS =====
+    function renderAdminPricing() {
+        const plans=[getPlan(0),getPlan(1),getPlan(2)];
+        document.getElementById('adminContent').innerHTML=`
+        <div style="margin-bottom:1.5rem;"><h2 style="font-size:1.4rem;font-weight:800;">💰 Pricing Plans</h2><p style="font-size:0.85rem;color:var(--gray-600);">Configure the 3 pricing plans shown on the website. Each plan can have up to 8 PDF links.</p></div>
+        ${plans.map((p,i)=>`
+        <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-icon">${i===1?'⭐':'📦'}</span><div><h3>Plan ${i+1}: ${Utils.escapeHtml(p.title)}</h3><p>${p.is_popular?'Popular/Featured Plan':'Standard Plan'}</p></div></div>
+            <div class="settings-card-body">
+                <div class="settings-grid-2">
+                    <div class="settings-field"><label>Plan Title *</label><input type="text" id="pp_${i}_title" value="${Utils.escapeHtml(p.title||'')}"></div>
+                    <div class="settings-field"><label>Period Label</label><input type="text" id="pp_${i}_period" value="${Utils.escapeHtml(p.period||'')}" placeholder="/year or /subject"></div>
+                    <div class="settings-field"><label>Price (₹) *</label><input type="number" id="pp_${i}_price" value="${p.price||0}"></div>
+                    <div class="settings-field"><label>Original Price (₹)</label><input type="number" id="pp_${i}_original_price" value="${p.original_price||0}"></div>
+                </div>
+                <div class="settings-field"><label>Popular Plan?</label><select id="pp_${i}_popular"><option value="false" ${!p.is_popular?'selected':''}>No</option><option value="true" ${p.is_popular?'selected':''}>Yes (Highlighted)</option></select></div>
+                <div class="settings-field"><label>Features (one per line)</label><textarea id="pp_${i}_features" rows="5" placeholder="Feature 1&#10;Feature 2&#10;...">${(p.features||[]).join('\\n')}</textarea></div>
+                <div style="margin-top:0.75rem;"><label style="font-size:0.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:0.5rem;">📄 PDF Links (Name → URL) — up to 8</label>
+                ${Array.from({length:8},(_, li)=>{const link=(p.links||[])[li]||{name:'',url:''}; return `<div class="settings-grid-2" style="margin-bottom:0.5rem;"><div class="settings-field"><input type="text" id="pp_${i}_link_${li}_name" value="${Utils.escapeHtml(link.name||'')}" placeholder="Button Name (e.g. Anatomy)"></div><div class="settings-field"><input type="url" id="pp_${i}_link_${li}_url" value="${Utils.escapeHtml(link.url||'')}" placeholder="https://drive.google.com/..."></div></div>`;}).join('')}
+                </div>
+            </div>
+            <div class="settings-card-footer"><button class="btn btn-primary btn-sm" onclick="savePricingPlan(${i})">💾 Save Plan ${i+1}</button></div>
+        </div>`).join('')}
+        <div style="margin-top:1rem;padding:1rem;background:var(--primary-light);border-radius:var(--radius);font-size:0.85rem;color:var(--gray-600);">
+            <strong>💡 How it works:</strong> When you save a plan, a hidden course is auto-created. Students buy via UPI → you approve → they see "Open Notes" with all PDF links listed as buttons.
+        </div>`;
+    }
+
+    async function savePricingPlan(i) {
+        const title=document.getElementById('pp_'+i+'_title').value.trim();
+        const price=parseFloat(document.getElementById('pp_'+i+'_price').value)||0;
+        const original_price=parseFloat(document.getElementById('pp_'+i+'_original_price').value)||0;
+        const period=document.getElementById('pp_'+i+'_period').value.trim();
+        const is_popular=document.getElementById('pp_'+i+'_popular').value==='true';
+        const features=document.getElementById('pp_'+i+'_features').value.split('\n').map(f=>f.trim()).filter(f=>f);
+        const links=[];
+        for(let li=0;li<8;li++){
+            const name=document.getElementById('pp_'+i+'_link_'+li+'_name').value.trim();
+            const url=document.getElementById('pp_'+i+'_link_'+li+'_url').value.trim();
+            if(name||url) links.push({name,url});
+        }
+        if(!title||!price){showToast('Title and Price are required','error');return;}
+        if(original_price&&original_price<price){showToast('Original Price must be ≥ Price','error');return;}
+
+        const plan={title,price,original_price,period,is_popular,features,links};
+        // Save plan config to site_settings
+        await saveSetting('plan_'+(i+1), JSON.stringify(plan));
+
+        // Auto-create/update hidden course for this plan
+        const slug='pricing-plan-'+(i+1);
+        const courseData={title:title,slug:slug,short_description:'Pricing plan: '+title,description:title,price:price,original_price:original_price||price,category:'general',difficulty:'beginner',is_published:false,is_featured:false,thumbnail_url:'',pdf_url:links[0]?.url||''};
+        const existing=APP.courses.find(c=>c.slug===slug);
+        if(existing) courseData.id=existing.id;
+        const r=await saveCourseToDb(courseData);
+        if(!r.success){showToast('Error creating plan course: '+(r.error?.message||''),'error');return;}
+
+        showToast('Plan '+(i+1)+' saved!');
+        await fetchCourses();
+        renderPricingPlans();
+    }
 
     function renderAdminSettings() {
         const s=APP.settings;
