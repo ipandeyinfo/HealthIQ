@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HealthIQ - Premium Medical &amp; PhD Notes for exam success.">
+    <meta name="google" content="notranslate">
+    <title>HealthIQ - Premium Medical &amp; PhD Notes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f6fec;
+            --primary-dark: #0a4fb8;
+            --primary-light: #e8f2ff;
+            --accent: #064299;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px -3px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 50px -12px rgba(0,0,0,0.15);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        [data-theme="dark"] {
+            --white: #0f172a; --gray-50: #1e293b; --gray-100: #1e293b;
+            --gray-200: #334155; --gray-300: #475569; --gray-600: #94a3b8;
+            --gray-800: #e2e8f0; --gray-900: #f8fafc; --primary-light: #1e3a5f;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3); --shadow-md: 0 4px 16px rgba(0,0,0,0.4); --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--gray-800); background: var(--white); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+        :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
+        .navbar { position: fixed; top: 0; width: 100%; background: rgba(255,255,255,0.97); backdrop-filter: blur(16px); border-bottom: 1px solid var(--gray-200); z-index: 1000; padding: 0.7rem 0; transition: var(--transition); }
+        [data-theme="dark"] .navbar { background: rgba(15,23,42,0.97); }
+        .nav-container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; letter-spacing: -0.5px; }
+        .logo span { color: var(--gray-900); }
+        .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+        .nav-links a { text-decoration: none; color: var(--gray-600); font-weight: 500; font-size: 0.9rem; transition: var(--transition); position: relative; }
+        .nav-links a:hover { color: var(--primary); }
+        .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--primary); transition: var(--transition); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+        .btn { padding: 0.6rem 1.4rem; border-radius: 8px; font-weight: 600; font-size: 0.875rem; cursor: pointer; border: none; transition: var(--transition); text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15,111,236,0.3); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: #fff; }
+        .btn-ghost { background: var(--primary-light); color: var(--primary); }
+        .btn-ghost:hover { background: var(--primary); color: #fff; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-sm { padding: 0.4rem 0.9rem; font-size: 0.8rem; }
+        .btn-lg { padding: 0.8rem 2rem; font-size: 1rem; }
+        .btn-loading { position: relative; color: transparent !important; }
+        .btn-loading::after { content: ''; position: absolute; width: 16px; height: 16px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .dark-toggle { background: var(--gray-100); border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+        .dark-toggle:hover { background: var(--gray-200); }
+        .hamburger { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-800); }
+
+        .hero { padding: 9rem 2rem 5rem; background: linear-gradient(160deg, var(--primary-light) 0%, var(--white) 40%, #f0f7ff 100%); text-align: center; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: -40%; right: -15%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(15,111,236,0.06) 0%, transparent 65%); border-radius: 50%; }
+        .hero-content { max-width: 820px; margin: 0 auto; position: relative; z-index: 1; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--white); border: 1px solid var(--gray-200); color: var(--gray-800); padding: 0.5rem 1.2rem; border-radius: 24px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; color: var(--gray-900); margin-bottom: 1.2rem; line-height: 1.15; letter-spacing: -1px; }
+        .hero h1 .highlight { color: var(--primary); }
+        .hero p { font-size: 1.15rem; color: var(--gray-600); margin-bottom: 2.5rem; max-width: 620px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+        .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .hero-stats { display: flex; justify-content: center; gap: 3.5rem; margin-top: 3.5rem; padding-top: 2.5rem; border-top: 1px solid var(--gray-200); }
+        .stat-item h3 { font-size: 2.2rem; color: var(--primary); font-weight: 800; }
+        .stat-item p { font-size: 0.85rem; color: var(--gray-600); margin-top: 0.2rem; }
+
+        .section { padding: 5rem 2rem; max-width: 1280px; margin: 0 auto; }
+        .section-alt { background: var(--gray-50); }
+        .section-header { text-align: center; margin-bottom: 3rem; }
+        .section-header h2 { font-size: 2.2rem; font-weight: 800; color: var(--gray-900); margin-bottom: 0.75rem; letter-spacing: -0.5px; }
+        .section-header p { color: var(--gray-600); font-size: 1.05rem; max-width: 600px; margin: 0 auto; }
+
+        .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; }
+        .course-card { background: var(--white); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--gray-200); transition: var(--transition); position: relative; }
+        .course-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+        .course-img { height: 180px; background: linear-gradient(135deg, #0f6fec, #064299); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 3rem; position: relative; }
+        .course-img.anatomy { background: linear-gradient(135deg, #0f6fec, #3b82f6); }
+        .course-img.pharmacology { background: linear-gradient(135deg, #064299, #1d4ed8); }
+        .course-img.clinical { background: linear-gradient(135deg, #0369a1, #0ea5e9); }
+        .course-img.pathology { background: linear-gradient(135deg, #1e1b4b, #4338ca); }
+        .course-badge { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); padding: 0.3rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; color: #fff; }
+        .course-body { padding: 1.5rem; }
+        .course-body h3 { font-size: 1.1rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem; }
+        .course-body p { font-size: 0.9rem; color: var(--gray-600); margin-bottom: 1rem; line-height: 1.5; }
+        .course-footer { display: flex; align-items: center; justify-content: space-between; }
+        .course-price { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+        .course-actions { display: flex; gap: 0.5rem; }
+        .course-actions .btn { padding: 0.5rem 1rem; font-size: 0.8rem; }
+        .admin-actions { display: none; position: absolute; top: 12px; left: 12px; gap: 0.4rem; z-index: 5; }
+        .admin-mode .admin-actions { display: flex; }
+        .admin-actions .btn { padding: 0.35rem 0.7rem; font-size: 0.7rem; border-radius: 6px; }
+
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+        .feature-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 2rem; transition: var(--transition); }
+        .feature-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+        .feature-icon { width: 52px; height: 52px; background: var(--primary-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1.2rem; }
+        .feature-card h3 { font-size: 1.05rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem; }
+        .feature-card p { font-size: 0.9rem; color: var(--gray-600); line-height: 1.6; }
+
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .pricing-card { background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius-xl); padding: 2.5rem; text-align: center; transition: var(--transition); position: relative; }
+        .pricing-card.popular { border-color: var(--primary); box-shadow: 0 8px 30px rgba(15,111,236,0.12); }
+        .pricing-card.popular::before { content: 'Most Popular'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .pricing-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+        .pricing-card h3 { font-size: 1.2rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem; }
+        .pricing-amount { font-size: 2.5rem; font-weight: 800; color: var(--primary); margin: 1rem 0; }
+        .pricing-amount span { font-size: 1rem; color: var(--gray-600); font-weight: 400; }
+        .pricing-features { list-style: none; text-align: left; margin: 1.5rem 0; }
+        .pricing-features li { padding: 0.6rem 0; font-size: 0.9rem; color: var(--gray-600); border-bottom: 1px solid var(--gray-100); }
+        .pricing-features li::before { content: '\2713 '; color: var(--success); font-weight: 700; }
+
+        .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; }
+        .testimonial-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 2rem; transition: var(--transition); }
+        .testimonial-card:hover { box-shadow: var(--shadow-md); }
+        .testimonial-stars { color: var(--warning); margin-bottom: 0.75rem; font-size: 1rem; letter-spacing: 2px; }
+        .testimonial-text { font-size: 0.95rem; color: var(--gray-600); margin-bottom: 1.5rem; font-style: italic; line-height: 1.6; }
+        .testimonial-author { display: flex; align-items: center; gap: 0.75rem; }
+        .testimonial-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary); font-size: 0.9rem; }
+        .testimonial-info h4 { font-size: 0.9rem; font-weight: 700; color: var(--gray-900); }
+        .testimonial-info p { font-size: 0.8rem; color: var(--gray-600); }
+
+        .faq-list { max-width: 720px; margin: 0 auto; }
+        .faq-item { border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 0.75rem; overflow: hidden; }
+        .faq-question { padding: 1.2rem 1.5rem; cursor: pointer; font-weight: 600; color: var(--gray-900); display: flex; justify-content: space-between; align-items: center; background: var(--white); font-size: 0.95rem; border: none; width: 100%; text-align: left; }
+        .faq-question:hover { color: var(--primary); }
+        .faq-answer { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; color: var(--gray-600); font-size: 0.9rem; line-height: 1.6; }
+        .faq-item.active .faq-answer { max-height: 200px; padding: 0 1.5rem 1.2rem; }
+        .faq-item.active .arrow { transform: rotate(180deg); }
+        .arrow { transition: var(--transition); }
+
+        .footer { background: var(--gray-900); color: #fff; padding: 4rem 2rem 2rem; }
+        [data-theme="dark"] .footer { background: #020617; }
+        .footer-grid { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 2.5rem; margin-bottom: 2.5rem; }
+        .footer h4 { font-size: 1rem; margin-bottom: 1rem; font-weight: 700; }
+        .footer p, .footer a { font-size: 0.9rem; color: rgba(255,255,255,0.65); text-decoration: none; line-height: 2; display: block; }
+        .footer a:hover { color: #fff; }
+        .footer-bottom { max-width: 1280px; margin: 0 auto; text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.85rem; color: rgba(255,255,255,0.4); }
+
+        .whatsapp-float { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; background: #25d366; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.6rem; box-shadow: 0 4px 16px rgba(37,211,102,0.3); z-index: 999; cursor: pointer; transition: var(--transition); text-decoration: none; }
+        .whatsapp-float:hover { transform: scale(1.08) translateY(-2px); }
+
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); z-index: 4000; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--white); border-radius: var(--radius-xl); padding: 2.5rem; width: 90%; max-width: 440px; position: relative; animation: modalIn 0.3s ease; }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .modal h2 { font-size: 1.4rem; margin-bottom: 0.5rem; color: var(--gray-900); font-weight: 700; }
+        .modal .modal-subtitle { font-size: 0.9rem; color: var(--gray-600); margin-bottom: 1.5rem; }
+        .modal-close { position: absolute; top: 1rem; right: 1rem; background: var(--gray-100); border: none; font-size: 1.2rem; cursor: pointer; color: var(--gray-600); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .modal-close:hover { background: var(--gray-200); }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--gray-800); display: block; margin-bottom: 0.4rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--gray-200); border-radius: 10px; font-size: 0.9rem; background: var(--gray-50); color: var(--gray-900); outline: none; transition: var(--transition); font-family: inherit; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,111,236,0.1); background: var(--white); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+        .toast-container { position: fixed; top: 80px; right: 24px; z-index: 5000; display: flex; flex-direction: column; gap: 0.5rem; }
+        .toast { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; padding: 1rem 1.5rem; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; font-weight: 500; color: var(--gray-800); animation: slideIn 0.3s ease; min-width: 280px; }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast.warning { border-left: 4px solid var(--warning); }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; cursor: pointer; border: none; }
+        .user-menu { display: none; position: absolute; top: 100%; right: 0; background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 0.5rem; min-width: 180px; z-index: 100; }
+        .user-menu.active { display: block; }
+        .user-menu-item { padding: 0.6rem 1rem; font-size: 0.85rem; color: var(--gray-800); cursor: pointer; border-radius: 6px; transition: var(--transition); display: flex; align-items: center; gap: 0.5rem; border: none; background: none; width: 100%; text-align: left; }
+        .user-menu-item:hover { background: var(--gray-50); }
+        .user-menu-item.danger { color: var(--danger); }
+
+        .admin-panel { display: none; position: fixed; inset: 0; background: var(--gray-50); z-index: 3000; overflow-y: auto; }
+        .admin-panel.active { display: block; }
+        .admin-header { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+        .admin-header h2 { font-size: 1.2rem; font-weight: 700; color: var(--gray-900); display: flex; align-items: center; gap: 0.5rem; }
+        .admin-header-actions { display: flex; align-items: center; gap: 0.75rem; }
+        .admin-header-user { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--gray-600); padding: 0.4rem 0.8rem; background: var(--gray-50); border-radius: 8px; }
+        .admin-header-user .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .admin-layout { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 62px); }
+        .admin-sidebar { background: var(--white); border-right: 1px solid var(--gray-200); padding: 1.5rem 0; display: flex; flex-direction: column; }
+        .admin-sidebar-section { padding: 0 1.25rem; margin-bottom: 0.5rem; }
+        .admin-sidebar-label { font-size: 0.65rem; font-weight: 700; color: var(--gray-300); text-transform: uppercase; letter-spacing: 1px; padding: 0.75rem 1.5rem 0.4rem; }
+        .admin-sidebar-item { padding: 0.7rem 1.5rem; cursor: pointer; font-size: 0.88rem; font-weight: 500; color: var(--gray-600); display: flex; align-items: center; gap: 0.75rem; transition: var(--transition); border-left: 3px solid transparent; border-right: none; border-top: none; border-bottom: none; background: none; width: 100%; text-align: left; border-radius: 0; margin: 1px 0; }
+        .admin-sidebar-item:hover { background: var(--gray-50); color: var(--gray-900); }
+        .admin-sidebar-item.active { color: var(--primary); background: var(--primary-light); border-left-color: var(--primary); font-weight: 600; }
+        .admin-sidebar-item .badge-count { margin-left: auto; background: var(--primary-light); color: var(--primary); padding: 0.1rem 0.5rem; border-radius: 10px; font-size: 0.7rem; font-weight: 700; }
+        .admin-sidebar-footer { margin-top: auto; padding: 1rem 1.5rem; border-top: 1px solid var(--gray-200); font-size: 0.75rem; color: var(--gray-300); }
+        .admin-content { padding: 2rem; overflow-y: auto; max-height: calc(100vh - 62px); }
+        .admin-welcome { background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: var(--radius-lg); padding: 2rem 2.5rem; color: #fff; margin-bottom: 2rem; position: relative; overflow: hidden; }
+        .admin-welcome::before { content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+        .admin-welcome h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.3rem; }
+        .admin-welcome p { font-size: 0.9rem; opacity: 0.85; }
+        .admin-welcome .quick-actions { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
+        .admin-welcome .quick-actions .btn { background: rgba(255,255,255,0.15); color: #fff; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2); }
+        .admin-welcome .quick-actions .btn:hover { background: rgba(255,255,255,0.25); }
+        .admin-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .admin-stat-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 1.25rem 1.5rem; transition: var(--transition); position: relative; overflow: hidden; }
+        .admin-stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .admin-stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; border-radius: 4px 0 0 4px; }
+        .admin-stat-card:nth-child(1)::before { background: var(--primary); }
+        .admin-stat-card:nth-child(2)::before { background: var(--success); }
+        .admin-stat-card:nth-child(3)::before { background: var(--warning); }
+        .admin-stat-card:nth-child(4)::before { background: #8b5cf6; }
+        .admin-stat-card .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 0.75rem; }
+        .admin-stat-card:nth-child(1) .stat-icon { background: var(--primary-light); }
+        .admin-stat-card:nth-child(2) .stat-icon { background: #dcfce7; }
+        .admin-stat-card:nth-child(3) .stat-icon { background: #fef3c7; }
+        .admin-stat-card:nth-child(4) .stat-icon { background: #ede9fe; }
+        .admin-stat-card .stat-label { font-size: 0.75rem; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        .admin-stat-card .stat-value { font-size: 1.75rem; font-weight: 800; color: var(--gray-900); margin-top: 0.2rem; }
+        .admin-stat-card .stat-change { font-size: 0.75rem; color: var(--success); margin-top: 0.2rem; font-weight: 600; display: flex; align-items: center; gap: 0.25rem; }
+        .admin-table-wrapper { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+        .admin-table-header { padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--gray-200); flex-wrap: wrap; gap: 0.75rem; }
+        .admin-table-header h3 { font-size: 1rem; font-weight: 700; color: var(--gray-900); }
+        .admin-table-actions { display: flex; gap: 0.5rem; align-items: center; }
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th { text-align: left; padding: 0.85rem 1.5rem; font-size: 0.7rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.5px; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+        .admin-table td { padding: 0.9rem 1.5rem; font-size: 0.88rem; color: var(--gray-800); border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+        .admin-table tr { transition: var(--transition); }
+        .admin-table tr:hover td { background: var(--gray-50); }
+        .admin-table tr:last-child td { border-bottom: none; }
+        .status-badge { padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.3rem; }
+        .status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-active::before { background: #166534; }
+        .status-draft { background: #fef3c7; color: #92400e; }
+        .status-draft::before { background: #92400e; }
+        .status-inactive { background: #fee2e2; color: #991b1b; }
+        .status-inactive::before { background: #991b1b; }
+        .search-input { padding: 0.55rem 1rem 0.55rem 2.2rem; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 0.85rem; background: var(--gray-50) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 0.7rem center; color: var(--gray-900); outline: none; width: 220px; transition: var(--transition); }
+        .search-input:focus { border-color: var(--primary); width: 280px; background-color: var(--white); }
+        .empty-state { text-align: center; padding: 4rem 2rem; color: var(--gray-600); }
+        .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+        .empty-state h3 { font-size: 1.1rem; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem; }
+        .empty-state p { font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .admin-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .admin-activity { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 1.5rem; }
+        .admin-activity h3 { font-size: 0.95rem; font-weight: 700; color: var(--gray-900); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .activity-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--gray-100); }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 0.4rem; flex-shrink: 0; }
+        .activity-dot.green { background: var(--success); }
+        .activity-dot.blue { background: var(--primary); }
+        .activity-dot.yellow { background: var(--warning); }
+        .activity-text { font-size: 0.82rem; color: var(--gray-600); line-height: 1.4; }
+        .activity-text strong { color: var(--gray-900); }
+        .activity-time { font-size: 0.7rem; color: var(--gray-300); margin-top: 0.15rem; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; } .hamburger { display: block; } .hero h1 { font-size: 2.2rem; }
+            .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+            .course-grid, .features-grid, .pricing-grid, .testimonial-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; } .section { padding: 3rem 1.5rem; }
+            .hero { padding: 6rem 1.5rem 3rem; } .admin-layout { grid-template-columns: 1fr; }
+            .admin-sidebar { display: none; } .admin-grid-2 { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) { .hero h1 { font-size: 1.8rem; } .hero-buttons { flex-direction: column; align-items: center; } .footer-grid { grid-template-columns: 1fr; } }
+        .mobile-nav { display: none; position: fixed; top: 58px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 1rem 1.5rem; z-index: 999; flex-direction: column; gap: 0.75rem; box-shadow: var(--shadow-md); }
+        .mobile-nav.active { display: flex; }
+        .mobile-nav a { text-decoration: none; color: var(--gray-800); font-weight: 500; padding: 0.6rem 0; }
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer" role="alert" aria-live="polite"></div>
+
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <a href="javascript:void(0)" class="logo" aria-label="HealthIQ Home" onclick="scrollToEl('top')">Health<span>IQ</span></a>
+            <ul class="nav-links">
+                <li><a href="javascript:void(0)" onclick="scrollToEl('courses')">Courses</a></li>
+                <li><a href="javascript:void(0)" onclick="scrollToEl('pricing')">Pricing</a></li>
+                <li><a href="javascript:void(0)" onclick="scrollToEl('testimonials')">Reviews</a></li>
+                <li><a href="javascript:void(0)" onclick="scrollToEl('faq')">FAQ</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="dark-toggle" onclick="toggleDark()" aria-label="Toggle dark mode">&#x1F319;</button>
+                <div id="authButtons">
+                    <button class="btn btn-ghost" onclick="openModal('login')">Login</button>
+                    <button class="btn btn-primary" onclick="openModal('register')">Register</button>
+                </div>
+                <div id="userMenuWrapper" style="display:none;position:relative;">
+                    <button class="user-avatar" onclick="toggleUserMenu()" id="userAvatarBtn" aria-haspopup="true" aria-expanded="false">A</button>
+                    <div class="user-menu" id="userMenu" role="menu">
+                        <button class="user-menu-item" onclick="showMyCourses()">&#x1F4DA; My Courses</button>
+                        <button class="user-menu-item" onclick="openAdminPanel()" id="adminMenuItem" style="display:none;">&#x1F4CA; Admin</button>
+                        <button class="user-menu-item danger" onclick="logout()">&#x1F6AA; Logout</button>
+                    </div>
+                </div>
+                <button class="hamburger" onclick="toggleMobile()" aria-label="Menu">&#9776;</button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-nav" id="mobileNav"><a href="javascript:void(0)" onclick="scrollToEl('courses')">Courses</a><a href="javascript:void(0)" onclick="scrollToEl('pricing')">Pricing</a><a href="javascript:void(0)" onclick="scrollToEl('testimonials')">Reviews</a><a href="javascript:void(0)" onclick="scrollToEl('faq')">FAQ</a></div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-badge">&#x1F3C6; Trusted by 10,000+ Medical Students</span>
+            <h1>Premium <span class="highlight">Medical</span> &amp; PhD Notes</h1>
+            <p>High-yield handwritten notes, research material, revision PDFs, and clinical case resources &mdash; crafted by experts for your success.</p>
+            <div class="hero-buttons">
+                <a href="javascript:void(0)" onclick="scrollToEl('pricing')" class="btn btn-primary btn-lg">Buy Access</a>
+                <a href="javascript:void(0)" onclick="scrollToEl('courses')" class="btn btn-outline btn-lg">&#x1F4DA; Explore Courses</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item"><h3 class="counter" data-target="10000">0</h3><p>Students</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="250">0</h3><p>Notes Available</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="98">0</h3><p>% Satisfaction</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="50">0</h3><p>Expert Authors</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="courses" class="section">
+        <div class="section-header"><h2>Featured Courses</h2><p>Expertly curated, high-yield notes designed for exam success.</p></div>
+        <div class="course-grid" id="courseGrid"><div class="empty-state"><p>Loading courses...</p></div></div>
+    </section>
+
+    <div class="section-alt"><section class="section">
+        <div class="section-header"><h2>Why Choose Us</h2><p>Built by medical professionals, designed for academic excellence.</p></div>
+        <div class="features-grid">
+            <div class="feature-card"><div class="feature-icon">&#x270D;&#xFE0F;</div><h3>Expert-Curated Notes</h3><p>Written and reviewed by practicing doctors and academic professors.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#x1F3AF;</div><h3>High-Yield Content</h3><p>Focused on exam-relevant topics, frequently tested concepts, and clinical correlations.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#x1F52C;</div><h3>Research-Focused</h3><p>Ideal for PhD scholars with methodology guides and thesis templates.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#x1F512;</div><h3>Secure Access</h3><p>View-only protected PDFs with email-based access control.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#x1F4F1;</div><h3>Mobile-Friendly</h3><p>Access your notes on any device &mdash; phone, tablet, or laptop.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#x1F504;</div><h3>Updated Regularly</h3><p>Content updated with latest guidelines and exam patterns.</p></div>
+        </div>
+    </section></div>
+
+    <section id="pricing" class="section">
+        <div class="section-header"><h2>Simple Pricing</h2><p>Choose the plan that fits your learning goals.</p></div>
+        <div class="pricing-grid">
+            <div class="pricing-card"><h3>Single Subject</h3><div class="pricing-amount">&#8377;499<span>/subject</span></div><ul class="pricing-features"><li>One subject complete notes</li><li>PDF access for 1 year</li><li>Mobile-friendly viewer</li><li>Email-based access</li></ul><button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="openModal('register')">Get Started</button></div>
+            <div class="pricing-card popular"><h3>All-Access Bundle</h3><div class="pricing-amount">&#8377;2,499<span>/year</span></div><ul class="pricing-features"><li>All subjects included</li><li>Lifetime updates</li><li>Priority support</li><li>Clinical cases included</li><li>Research methodology</li></ul><button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="openModal('register')">Buy Now</button></div>
+            <div class="pricing-card"><h3>PhD Scholar</h3><div class="pricing-amount">&#8377;3,999<span>/year</span></div><ul class="pricing-features"><li>All medical notes</li><li>Research methodology</li><li>Thesis templates</li><li>1-on-1 mentorship</li><li>Publication guidance</li></ul><button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="openModal('register')">Get Started</button></div>
+        </div>
+    </section>
+
+    <div class="section-alt"><section id="testimonials" class="section">
+        <div class="section-header"><h2>What Students Say</h2><p>Thousands of medical students trust our notes.</p></div>
+        <div class="testimonial-grid">
+            <div class="testimonial-card"><div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testimonial-text">&ldquo;These notes saved my final year. The anatomy diagrams are incredible. Scored distinction!&rdquo;</div><div class="testimonial-author"><div class="testimonial-avatar">AS</div><div class="testimonial-info"><h4>Dr. Ananya Sharma</h4><p>MBBS, AIIMS Delhi</p></div></div></div>
+            <div class="testimonial-card"><div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testimonial-text">&ldquo;Research methodology notes were a lifesaver for my PhD thesis. Incredibly well-structured.&rdquo;</div><div class="testimonial-author"><div class="testimonial-avatar">RK</div><div class="testimonial-info"><h4>Rahul Kumar</h4><p>PhD Scholar, JIPMER</p></div></div></div>
+            <div class="testimonial-card"><div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testimonial-text">&ldquo;Pharmacology was my weakest subject until I found these notes. The mnemonics are gold!&rdquo;</div><div class="testimonial-author"><div class="testimonial-avatar">PM</div><div class="testimonial-info"><h4>Dr. Priya Mehta</h4><p>MBBS, KEM Mumbai</p></div></div></div>
+        </div>
+    </section></div>
+
+    <section id="faq" class="section">
+        <div class="section-header"><h2>Frequently Asked Questions</h2><p>Everything you need to know about our notes.</p></div>
+        <div class="faq-list">
+            <div class="faq-item active"><button class="faq-question" onclick="toggleFaq(this)" aria-expanded="true">How do I access notes after purchase? <span class="arrow">&#9660;</span></button><div class="faq-answer">After payment, you receive an email with a secure link. Access is tied to your registered email.</div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">Can I download the PDFs? <span class="arrow">&#9660;</span></button><div class="faq-answer">Notes are view-only and protected against downloading to prevent unauthorized distribution.</div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">Are notes updated regularly? <span class="arrow">&#9660;</span></button><div class="faq-answer">Yes! We update notes with latest guidelines and exam patterns. All-Access gets lifetime updates.</div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">Can I get a refund? <span class="arrow">&#9660;</span></button><div class="faq-answer">We offer a 7-day refund policy. Contact us via WhatsApp or email within 7 days.</div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">Do you cover NEET PG / USMLE? <span class="arrow">&#9660;</span></button><div class="faq-answer">Yes, our notes cover high-yield topics for NEET PG, USMLE Step 1 &amp; 2, and other exams.</div></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div><h4>HealthIQ</h4><p>Premium medical education resources crafted by experts for aspiring doctors and researchers worldwide.</p></div>
+            <div><h4>Quick Links</h4><a href="javascript:void(0)" onclick="scrollToEl('courses')">Courses</a><a href="javascript:void(0)" onclick="scrollToEl('pricing')">Pricing</a><a href="javascript:void(0)" onclick="scrollToEl('faq')">FAQ</a></div>
+            <div><h4>Legal</h4><a href="javascript:void(0)">Terms of Service</a><a href="javascript:void(0)">Privacy Policy</a><a href="javascript:void(0)">Refund Policy</a></div>
+            <div><h4>Contact</h4><a href="mailto:support@healthiq.in">support@healthiq.in</a><a href="https://wa.me/919876543210">WhatsApp: +91 98765 43210</a></div>
+        </div>
+        <div class="footer-bottom"><p>&copy; 2026 HealthIQ. All rights reserved.</p></div>
+    </footer>
+
+    <a href="https://wa.me/919876543210" target="_blank" rel="noopener" class="whatsapp-float" aria-label="Chat on WhatsApp">&#x1F4AC;</a>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal" role="dialog" aria-modal="true">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('login')" aria-label="Close">&times;</button>
+            <h2>Welcome Back</h2>
+            <p class="modal-subtitle">Sign in to access your purchased notes.</p>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group"><label for="loginEmail">Email</label><input type="email" id="loginEmail" placeholder="your@email.com" required></div>
+                <div class="form-group"><label for="loginPassword">Password</label><input type="password" id="loginPassword" placeholder="Enter your password" required minlength="6"></div>
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;" id="loginBtn">Sign In</button>
+            </form>
+            <p style="text-align:center;margin-top:1rem;font-size:0.85rem;color:var(--gray-600)">No account? <button type="button" onclick="closeModal('login');setTimeout(()=>openModal('register'),150)" style="color:var(--primary);font-weight:600;text-decoration:none;background:none;border:none;cursor:pointer;font-size:inherit;">Register</button></p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal-overlay" id="registerModal" role="dialog" aria-modal="true">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('register')" aria-label="Close">&times;</button>
+            <h2>Create Account</h2>
+            <p class="modal-subtitle">Join thousands of medical students on HealthIQ.</p>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-row"><div class="form-group"><label for="regFirstName">First Name</label><input type="text" id="regFirstName" required></div><div class="form-group"><label for="regLastName">Last Name</label><input type="text" id="regLastName" required></div></div>
+                <div class="form-group"><label for="regUsername">Username</label><input type="text" id="regUsername" required pattern="^[a-zA-Z][a-zA-Z0-9_]{2,29}$"></div>
+                <div class="form-group"><label for="regEmail">Email</label><input type="email" id="regEmail" required></div>
+                <div class="form-group"><label for="regPassword">Password</label><input type="password" id="regPassword" required minlength="6" placeholder="Minimum 6 characters"></div>
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;" id="registerBtn">Create Account</button>
+            </form>
+            <p style="text-align:center;margin-top:1rem;font-size:0.85rem;color:var(--gray-600)">Have an account? <button type="button" onclick="closeModal('register');setTimeout(()=>openModal('login'),150)" style="color:var(--primary);font-weight:600;text-decoration:none;background:none;border:none;cursor:pointer;font-size:inherit;">Login</button></p>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h2>&#x2699;&#xFE0F; HealthIQ Admin</h2>
+            <div class="admin-header-actions">
+                <div class="admin-header-user"><span class="dot"></span> <span id="adminUserLabel">Admin</span></div>
+                <button class="btn btn-ghost btn-sm" onclick="closeAdminPanel()">&#x2190; Back to Site</button>
+            </div>
+        </div>
+        <div class="admin-layout">
+            <div class="admin-sidebar">
+                <div class="admin-sidebar-label">Main</div>
+                <button class="admin-sidebar-item" onclick="switchAdminTab('dashboard',this)">&#x1F4CA; Dashboard</button>
+                <button class="admin-sidebar-item active" onclick="switchAdminTab('courses',this)">&#x1F4DA; Courses <span class="badge-count" id="sidebarCourseCount">0</span></button>
+                <div class="admin-sidebar-label">Management</div>
+                <button class="admin-sidebar-item" onclick="switchAdminTab('users',this)">&#x1F465; Users <span class="badge-count" id="sidebarUserCount">0</span></button>
+                <button class="admin-sidebar-item" onclick="switchAdminTab('orders',this)">&#x1F9FE; Orders <span class="badge-count" id="sidebarOrderCount">0</span></button>
+                <button class="admin-sidebar-item" onclick="switchAdminTab('enrollments',this)">&#x1F393; Enrollments</button>
+                <div class="admin-sidebar-label">System</div>
+                <button class="admin-sidebar-item" onclick="switchAdminTab('settings',this)">&#x2699;&#xFE0F; Settings</button>
+                <div class="admin-sidebar-footer">HealthIQ Admin v2.0<br>Last sync: <span id="lastSyncTime">just now</span></div>
+            </div>
+            <div class="admin-content" id="adminContent"></div>
+        </div>
+    </div>
+
+    <!-- Course Modal -->
+    <div class="modal-overlay" id="courseModal" role="dialog" aria-modal="true">
+        <div class="modal" style="max-width:580px;max-height:90vh;overflow-y:auto;">
+            <button class="modal-close" onclick="closeModal('course')" aria-label="Close">&times;</button>
+            <h2 id="courseModalTitle">Add New Course</h2>
+            <form onsubmit="saveCourse(event)">
+                <input type="hidden" id="editCourseId">
+                <div class="form-row"><div class="form-group"><label>Title *</label><input type="text" id="courseTitle" required minlength="3" oninput="autoSlug(this.value)"></div><div class="form-group"><label>Slug</label><input type="text" id="courseSlug"></div></div>
+                <div class="form-group"><label>Short Description</label><input type="text" id="courseShortDesc" maxlength="300"></div>
+                <div class="form-group"><label>Full Description *</label><textarea id="courseDesc" required></textarea></div>
+                <div class="form-row"><div class="form-group"><label>Price *</label><input type="number" id="coursePrice" min="0" required></div><div class="form-group"><label>Original Price</label><input type="number" id="courseOriginalPrice" min="0"></div></div>
+                <div class="form-row"><div class="form-group"><label>Category</label><select id="courseCategory"><option value="anatomy">Anatomy</option><option value="physiology">Physiology</option><option value="pharmacology">Pharmacology</option><option value="pathology">Pathology</option><option value="microbiology">Microbiology</option><option value="biochemistry">Biochemistry</option><option value="clinical">Clinical</option><option value="general">General</option></select></div><div class="form-group"><label>Difficulty</label><select id="courseDifficulty"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></div></div>
+                <div class="form-row"><div class="form-group"><label>Badge</label><input type="text" id="courseBadge"></div><div class="form-group"><label>Icon</label><input type="text" id="courseIcon"></div></div>
+                <div class="form-group"><label>Image URL</label><input type="url" id="courseImageUrl"></div>
+                <div class="form-row"><div class="form-group"><label>Published</label><select id="coursePublished"><option value="true">Published</option><option value="false">Draft</option></select></div><div class="form-group"><label>Featured</label><select id="courseFeatured"><option value="false">No</option><option value="true">Yes</option></select></div></div>
+                <div style="display:flex;gap:0.75rem;margin-top:1rem;"><button type="submit" class="btn btn-primary" style="flex:1;justify-content:center;">Save</button><button type="button" class="btn btn-outline" style="flex:1;justify-content:center;" onclick="closeModal('course')">Cancel</button></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    'use strict';
+    // ===== UTILITIES =====
+    const Utils = {
+        escapeHtml(str) { if (!str) return ''; const d = document.createElement('div'); d.textContent = String(str); return d.innerHTML; },
+        formatCurrency(n) { return '\u20B9' + Number(n || 0).toLocaleString('en-IN'); },
+        formatDate(d) { return d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'; }
+    };
+
+    // ===== UI =====
+    function openModal(t) { const m = document.getElementById(t+'Modal'); if(m){m.classList.add('active'); setTimeout(()=>m.querySelector('input')?.focus(),100);} }
+    function closeModal(t) { document.getElementById(t+'Modal')?.classList.remove('active'); }
+    function showToast(msg, type='success') {
+        const c = document.getElementById('toastContainer');
+        const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg;
+        c.appendChild(t); setTimeout(() => { t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3500);
+    }
+    function toggleDark() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+        localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        document.querySelector('.dark-toggle').innerHTML = isDark ? '&#x1F319;' : '&#x1F31D;';
+    }
+    function toggleMobile() { document.getElementById('mobileNav').classList.toggle('active'); }
+    function toggleFaq(el) { const item = el.parentElement; item.classList.toggle('active'); el.setAttribute('aria-expanded', item.classList.contains('active')); }
+    function toggleUserMenu() { document.getElementById('userMenu').classList.toggle('active'); }
+
+    document.addEventListener('click', e => { if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active'); if(!e.target.closest('#userMenuWrapper')) document.getElementById('userMenu')?.classList.remove('active'); });
+    document.addEventListener('keydown', e => { if(e.key==='Escape') { document.querySelectorAll('.modal-overlay.active').forEach(m=>m.classList.remove('active')); } });
+    document.querySelectorAll('.mobile-nav a').forEach(a => a.addEventListener('click', () => document.getElementById('mobileNav').classList.remove('active')));
+    if (localStorage.getItem('theme') === 'dark') { document.documentElement.setAttribute('data-theme','dark'); document.querySelector('.dark-toggle').innerHTML='&#x1F31D;'; }
+
+    // ===== SUPABASE =====
+    const SUPABASE_URL = 'https://ejpwabynzdjfecsrgumh.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqcHdhYnluemRqZmVjc3JndW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NjMyOTksImV4cCI6MjA5NTUzOTI5OX0.fKnfwX3Ckr8hxEOZfaGKrT2oh0XDxKupEL4L5RgQd2s';
+    var db = null;
+    (function() {
+        // Custom storage for iframe compatibility (Google Sites)
+        const memStore = {};
+        const iframeStorage = {
+            getItem: (key) => { try { return localStorage.getItem(key); } catch(e) {} try { return sessionStorage.getItem(key); } catch(e) {} return memStore[key] || null; },
+            setItem: (key, val) => { memStore[key]=val; try { localStorage.setItem(key, val); } catch(e) {} try { sessionStorage.setItem(key, val); } catch(e) {} },
+            removeItem: (key) => { delete memStore[key]; try { localStorage.removeItem(key); } catch(e) {} try { sessionStorage.removeItem(key); } catch(e) {} }
+        };
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+        s.onload = () => { db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {auth:{persistSession:true,storageKey:'healthiq-auth',storage:iframeStorage,autoRefreshToken:true,detectSessionInUrl:true}}); if(typeof appInit==='function') appInit(); };
+        s.onerror = () => showToast('Failed to connect. Please refresh.', 'error');
+        document.head.appendChild(s);
+    })();
+    function isSupabaseConfigured() { return !!db; }
+
+    // Scroll helper for iframe compatibility (Google Sites)
+    function scrollToEl(id) {
+        if(id==='top'){window.scrollTo({top:0,behavior:'smooth'});return;}
+        const el=document.getElementById(id);
+        if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function getGoogleDriveImageUrl(url) {
+        if (!url) return '';
+        const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/); if(m) return 'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w800';
+        const m2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/); if(m2) return 'https://drive.google.com/thumbnail?id='+m2[1]+'&sz=w800';
+        return url;
+    }
+
+    // ===== STATE =====
+    const APP = { currentUser: null, userProfile: null, courses: [], users: [], orders: [], enrollments: [], myEnrollments: [] };
+
+    // ===== DATA =====
+    async function fetchCourses() {
+        if (!isSupabaseConfigured()) return;
+        try {
+            let q = db.from('courses').select('*').order('created_at', {ascending:false});
+            if (!APP.currentUser || APP.currentUser.role !== 'admin') q = q.eq('is_published', true);
+            const { data, error } = await q; if(error) throw error;
+            APP.courses = data || [];
+        } catch(e) { console.error(e); APP.courses = []; }
+        renderCourses();
+    }
+    async function fetchUsers() { if(!isSupabaseConfigured()) return; try { const {data}=await db.from('profiles').select('*').order('created_at',{ascending:false}); APP.users=data||[]; const {data:e}=await db.from('enrollments').select('*, profiles(full_name,email), courses(title,category,price)').order('enrolled_at',{ascending:false}); APP.enrollments=e||[]; } catch(e){} }
+    async function fetchOrders() { if(!isSupabaseConfigured()) return; try { const {data,error}=await db.from('orders').select('*, profiles(full_name,email), courses(title,category)').order('created_at',{ascending:false}); if(error){console.error('fetchOrders error:',error);showToast('Orders fetch error: '+error.message,'error');} APP.orders=data||[]; } catch(e){console.error('fetchOrders:',e);} }
+    async function fetchMyEnrollments() { if(!APP.currentUser) { APP.myEnrollments=[]; return; } try { const {data,error}=await db.from('enrollments').select('id,user_id,course_id,status,progress').eq('user_id',APP.currentUser.id); console.log('fetchMyEnrollments:',{data,error}); if(!error)APP.myEnrollments=data||[]; else APP.myEnrollments=[]; } catch(e){ console.error('fetchMyEnrollments:',e); APP.myEnrollments=[]; } }
+
+    async function saveCourseToDb(d) {
+        if(!isSupabaseConfigured()) return {success:false};
+        // Only include columns known to exist in the courses table
+        const allowed=['title','slug','short_description','description','price','original_price','category','difficulty','is_published','is_featured','thumbnail_url','published_at'];
+        const o={}; for(const k of allowed){if(d[k]!==undefined)o[k]=d[k];}
+        try { if(d.id){const{error}=await db.from('courses').update(o).eq('id',d.id); if(error)throw error;} else {const{error}=await db.from('courses').insert(o); if(error)throw error;} return {success:true}; }
+        catch(e){return {success:false,error:e};}
+    }
+    async function deleteCourseFromDb(id) { if(!isSupabaseConfigured()) return {success:false}; try{const{error}=await db.from('courses').delete().eq('id',id); if(error)throw error; return{success:true};}catch(e){return{success:false,error:e};} }
+
+    // ===== AUTH =====
+    async function handleLogin(event) {
+        event.preventDefault();
+        const email=document.getElementById('loginEmail').value.trim(), pass=document.getElementById('loginPassword').value;
+        if(!email||!pass){showToast('Please fill all fields','error');return;}
+        if(!isSupabaseConfigured()){showToast('Service unavailable','error');return;}
+        const btn=document.getElementById('loginBtn'); btn.classList.add('btn-loading'); btn.disabled=true;
+        try {
+            const {data,error}=await db.auth.signInWithPassword({email,password:pass}); if(error)throw error;
+            const {data:profile}=await db.from('profiles').select('*').eq('id',data.user.id).single();
+            if(profile?.locked_until&&new Date(profile.locked_until)>new Date()){await db.auth.signOut();throw new Error('Account locked.');}
+            if(profile&&!profile.is_active){await db.auth.signOut();throw new Error('Account deactivated.');}
+            try{await db.rpc('handle_successful_login',{user_uuid:data.user.id});}catch(e){}
+            const role = profile?.role || (data.user.email === 'thehealthiqinfo@gmail.com' ? 'admin' : 'student');
+            if(role==='admin' && profile && profile.role!=='admin'){ try{await db.from('profiles').update({role:'admin'}).eq('id',data.user.id);}catch(e){} }
+            APP.currentUser={id:data.user.id,name:profile?.full_name||email.split('@')[0],email:data.user.email,role:role};
+            APP.userProfile=profile; closeModal('login'); updateAuthUI(); await fetchMyEnrollments(); await fetchMyOrders(); await fetchCourses();
+            showToast('Welcome back, '+Utils.escapeHtml(APP.currentUser.name)+'!');
+        } catch(e){showToast(e.message||'Login failed','error');} finally{btn.classList.remove('btn-loading');btn.disabled=false;}
+    }
+
+    async function handleRegister(event) {
+        event.preventDefault();
+        const fn=document.getElementById('regFirstName').value.trim(), ln=document.getElementById('regLastName').value.trim(), un=document.getElementById('regUsername').value.trim(), em=document.getElementById('regEmail').value.trim(), pw=document.getElementById('regPassword').value;
+        if(!fn||!ln||!un||!em||!pw){showToast('Fill all fields','error');return;}
+        if(pw.length<6){showToast('Password min 6 chars','error');return;}
+        if(!isSupabaseConfigured()){showToast('Service unavailable','error');return;}
+        const btn=document.getElementById('registerBtn'); btn.classList.add('btn-loading'); btn.disabled=true;
+        try {
+            const {data,error}=await db.auth.signUp({email:em,password:pw,options:{data:{full_name:fn+' '+ln,first_name:fn,last_name:ln,username:un}}}); if(error)throw error;
+            if(data.user){await new Promise(r=>setTimeout(r,800)); const{data:p}=await db.from('profiles').select('*').eq('id',data.user.id).single(); APP.userProfile=p; APP.currentUser={id:data.user.id,name:fn+' '+ln,email:em,role:'student'}; closeModal('register'); updateAuthUI(); renderCourses(); showToast('Account created! Welcome!');}
+            else{closeModal('register');showToast('Check email to verify.','success');}
+        } catch(e){showToast(e.message||'Registration failed','error');} finally{btn.classList.remove('btn-loading');btn.disabled=false;}
+    }
+
+    async function logout() { if(!isSupabaseConfigured())return; await db.auth.signOut(); APP.currentUser=null; APP.userProfile=null; APP.myEnrollments=[]; updateAuthUI(); closeAdminPanel(); renderCourses(); showToast('Logged out'); document.getElementById('userMenu').classList.remove('active'); }
+
+    async function initAuth() {
+        if(!isSupabaseConfigured()){updateAuthUI();return;}
+        try{const{data:{session}}=await db.auth.getSession(); if(session?.user){const{data:p}=await db.from('profiles').select('*').eq('id',session.user.id).single(); const r=p?.role||(session.user.email==='thehealthiqinfo@gmail.com'?'admin':'student'); APP.currentUser={id:session.user.id,name:p?.full_name||session.user.email.split('@')[0],email:session.user.email,role:r}; APP.userProfile=p; await fetchMyEnrollments(); await fetchMyOrders(); renderCourses();}}catch(e){}
+        updateAuthUI();
+        db.auth.onAuthStateChange(async(ev,session)=>{if(ev==='SIGNED_OUT'){APP.currentUser=null;APP.userProfile=null;APP.myEnrollments=[];APP.orders=[];updateAuthUI();renderCourses();}else if((ev==='SIGNED_IN'||ev==='TOKEN_REFRESHED')&&session?.user&&!APP.currentUser){const{data:p}=await db.from('profiles').select('*').eq('id',session.user.id).single();const r=p?.role||(session.user.email==='thehealthiqinfo@gmail.com'?'admin':'student');APP.currentUser={id:session.user.id,name:p?.full_name||session.user.email.split('@')[0],email:session.user.email,role:r};APP.userProfile=p;await fetchMyEnrollments();await fetchMyOrders();updateAuthUI();renderCourses();}});
+    }
+
+    function updateAuthUI() {
+        const a=document.getElementById('authButtons'), u=document.getElementById('userMenuWrapper'), m=document.getElementById('adminMenuItem');
+        if(APP.currentUser){a.style.display='none';u.style.display='block';document.getElementById('userAvatarBtn').textContent=APP.currentUser.name.charAt(0).toUpperCase();if(m)m.style.display=APP.currentUser.role==='admin'?'flex':'none';if(APP.currentUser.role==='admin')document.body.classList.add('admin-mode');else document.body.classList.remove('admin-mode');}
+        else{a.style.display='flex';u.style.display='none';document.body.classList.remove('admin-mode');}
+    }
+
+    // ===== RENDER =====
+    function renderCourses() {
+        const grid=document.getElementById('courseGrid'), list=APP.courses.filter(c=>c.is_published!==false);
+        if(!list.length){grid.innerHTML='<div class="empty-state"><p>No courses available yet.</p></div>';return;}
+        grid.innerHTML=list.map(c=>{
+            const t=Utils.escapeHtml(c.title),d=Utils.escapeHtml(c.description||c.short_description||''),icon=Utils.escapeHtml(c.icon||'\u{1F4DA}'),badge=Utils.escapeHtml(c.badge||''),cat=Utils.escapeHtml(c.category||'');
+            const img=getGoogleDriveImageUrl(c.image_url||c.thumbnail_url);
+            const imgH=img?'<img src="'+Utils.escapeHtml(img)+'" alt="'+t+'" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><span style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:3rem;">'+icon+'</span>':'<span>'+icon+'</span>';
+            const enrolled=APP.myEnrollments.find(e=>String(e.course_id)===String(c.id)&&e.status==='active');
+            const existingOrder=APP.currentUser&&APP.orders?.find(o=>String(o.course_id)===String(c.id));
+            const pendingOrder=existingOrder&&existingOrder.status==='pending'?existingOrder:null;
+            const approvedOrder=existingOrder&&(existingOrder.status==='approved'||existingOrder.status==='completed')?existingOrder:null;
+            const price=enrolled||approvedOrder?'<span style="color:var(--success)">Purchased</span>':pendingOrder?'<span style="color:var(--warning)">Pending Approval</span>':Utils.formatCurrency(c.price)+(c.original_price&&c.original_price>c.price?'<span style="text-decoration:line-through;color:var(--gray-600);font-size:0.85rem;margin-left:0.5rem;">'+Utils.formatCurrency(c.original_price)+'</span>':'');
+            const btn=enrolled||approvedOrder?'<button class="btn btn-success btn-sm" disabled>\u2713 Enrolled</button>':pendingOrder?'<button class="btn btn-ghost btn-sm" disabled>&#x23F3; Awaiting</button>':'<button class="btn btn-primary" onclick="enrollCourse(\''+c.id+'\',\''+t.replace(/'/g,"\\'")+'\','+c.price+')">Buy</button>';
+            return '<div class="course-card"><div class="admin-actions"><button class="btn btn-warning btn-sm" onclick="editCourse(\''+c.id+'\')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteCourse(\''+c.id+'\')">Del</button></div>'+(enrolled||approvedOrder?'<div style="position:absolute;top:12px;left:12px;background:var(--success);color:#fff;padding:0.2rem 0.5rem;border-radius:6px;font-size:0.7rem;font-weight:700;z-index:4;">\u2713 ENROLLED</div>':pendingOrder?'<div style="position:absolute;top:12px;left:12px;background:var(--warning);color:#fff;padding:0.2rem 0.5rem;border-radius:6px;font-size:0.7rem;font-weight:700;z-index:4;">&#x23F3; PENDING</div>':'')+'<div class="course-img '+cat+'">'+imgH+(badge?'<span class="course-badge">'+badge+'</span>':'')+'</div><div class="course-body"><h3>'+t+'</h3><p>'+d+'</p><div class="course-footer"><span class="course-price">'+price+'</span><div class="course-actions">'+btn+'</div></div></div></div>';
+        }).join('');
+    }
+
+    // ===== ADMIN =====
+    async function openAdminPanel() { if(!APP.currentUser||APP.currentUser.role!=='admin'){showToast('Access denied','error');return;} document.getElementById('adminPanel').classList.add('active'); document.getElementById('userMenu').classList.remove('active'); document.getElementById('adminUserLabel').textContent=APP.currentUser.name; renderAdminCourses(); try{ await Promise.all([fetchCourses(),fetchUsers(),fetchOrders()]); updateSidebarCounts(); renderAdminCourses(); }catch(e){ console.error('Admin fetch error:',e); } }
+    function closeAdminPanel() { document.getElementById('adminPanel').classList.remove('active'); }
+    function updateSidebarCounts() { const cc=document.getElementById('sidebarCourseCount'),uc=document.getElementById('sidebarUserCount'),oc=document.getElementById('sidebarOrderCount'); if(cc)cc.textContent=APP.courses.length; if(uc)uc.textContent=APP.users.length; if(oc)oc.textContent=APP.orders.length; document.getElementById('lastSyncTime').textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
+    function switchAdminTab(tab,el) { document.querySelectorAll('.admin-sidebar-item').forEach(i=>i.classList.remove('active')); if(el)el.classList.add('active'); ({dashboard:renderAdminDashboard,courses:renderAdminCourses,users:renderAdminUsers,orders:renderAdminOrders,enrollments:renderAdminEnrollments,settings:renderAdminSettings})[tab]?.(); }
+
+    // Confirm dialog helper
+    function adminConfirm(msg,onYes) { const o=document.createElement('div'); o.className='modal-overlay active'; o.style.zIndex='5000'; o.innerHTML='<div class="modal" style="max-width:380px;text-align:center;"><h2 style="font-size:1.2rem;margin-bottom:0.5rem;">Confirm Action</h2><p style="color:var(--gray-600);font-size:0.9rem;margin-bottom:1.5rem;">'+msg+'</p><div style="display:flex;gap:0.75rem;"><button class="btn btn-outline" style="flex:1;justify-content:center;" id="acCancel">Cancel</button><button class="btn btn-danger" style="flex:1;justify-content:center;" id="acConfirm">Confirm</button></div></div>'; document.body.appendChild(o); o.querySelector('#acCancel').onclick=()=>o.remove(); o.querySelector('#acConfirm').onclick=()=>{o.remove();onYes();}; o.addEventListener('click',e=>{if(e.target===o)o.remove();}); }
+
+    function renderAdminDashboard() {
+        const rev=APP.orders.filter(o=>o.status==='completed').reduce((a,o)=>a+(o.total_amount||o.amount||0),0);
+        const published=APP.courses.filter(c=>c.is_published).length, drafts=APP.courses.length-published;
+        const recentOrders=APP.orders.slice(0,5);
+        const recentUsers=APP.users.slice(0,5);
+        const avgPrice=APP.courses.length?(APP.courses.reduce((a,c)=>a+(c.price||0),0)/APP.courses.length).toFixed(0):0;
+        document.getElementById('adminContent').innerHTML=`
+        <div class="admin-welcome"><h2>Welcome back, ${Utils.escapeHtml(APP.currentUser.name)} &#x1F44B;</h2><p>Here's what's happening with HealthIQ today.</p><div class="quick-actions"><button class="btn btn-sm" onclick="openAddCourse()">+ New Course</button><button class="btn btn-sm" onclick="switchAdminTab('orders',document.querySelectorAll('.admin-sidebar-item')[3])">View Orders</button><button class="btn btn-sm" onclick="refreshAdminData()">&#x1F504; Refresh</button><button class="btn btn-sm" onclick="exportData()">&#x1F4E5; Export</button></div></div>
+        <div class="admin-stats">
+            <div class="admin-stat-card"><div class="stat-icon">&#x1F4DA;</div><div class="stat-label">Total Courses</div><div class="stat-value">${APP.courses.length}</div><div class="stat-change">&#x2197; ${published} published, ${drafts} draft</div></div>
+            <div class="admin-stat-card"><div class="stat-icon">&#x1F465;</div><div class="stat-label">Total Users</div><div class="stat-value">${APP.users.length}</div><div class="stat-change">&#x2197; ${APP.enrollments.length} enrollments</div></div>
+            <div class="admin-stat-card"><div class="stat-icon">&#x1F4B0;</div><div class="stat-label">Revenue</div><div class="stat-value">${Utils.formatCurrency(rev)}</div><div class="stat-change">&#x2197; Avg. ${Utils.formatCurrency(avgPrice)}/course</div></div>
+            <div class="admin-stat-card"><div class="stat-icon">&#x1F9FE;</div><div class="stat-label">Orders</div><div class="stat-value">${APP.orders.length}</div><div class="stat-change">${APP.orders.filter(o=>o.status==='pending').length} pending</div></div>
+        </div>
+        <div class="admin-grid-2">
+            <div class="admin-activity"><h3>&#x1F4CB; Recent Orders</h3>${recentOrders.length?recentOrders.map(o=>'<div class="activity-item"><div class="activity-dot '+(o.status==='completed'?'green':'yellow')+'"></div><div><div class="activity-text"><strong>'+Utils.escapeHtml(o.profiles?.full_name||'User')+'</strong> purchased '+Utils.escapeHtml(o.courses?.title||'a course')+' for '+Utils.formatCurrency(o.total_amount||o.amount||0)+'</div><div class="activity-time">'+Utils.formatDate(o.created_at)+'</div></div></div>').join(''):'<p style="font-size:0.85rem;color:var(--gray-300);padding:1rem 0;">No orders yet</p>'}</div>
+            <div class="admin-activity"><h3>&#x1F464; Recent Users</h3>${recentUsers.length?recentUsers.map(u=>'<div class="activity-item"><div class="activity-dot blue"></div><div><div class="activity-text"><strong>'+Utils.escapeHtml((u.first_name||'')+' '+(u.last_name||''))+'</strong> joined as '+Utils.escapeHtml(u.role||'student')+'</div><div class="activity-time">'+Utils.formatDate(u.created_at)+'</div></div></div>').join(''):'<p style="font-size:0.85rem;color:var(--gray-300);padding:1rem 0;">No users yet</p>'}</div>
+        </div>`;
+    }
+    async function refreshAdminData() { showToast('Refreshing...','warning'); await Promise.all([fetchCourses(),fetchUsers(),fetchOrders()]); updateSidebarCounts(); const active=document.querySelector('.admin-sidebar-item.active'); const tab=active?.textContent?.includes('Dashboard')?'dashboard':active?.textContent?.includes('Courses')?'courses':active?.textContent?.includes('Users')?'users':active?.textContent?.includes('Orders')?'orders':'courses'; switchAdminTab(tab,active); showToast('Data refreshed!'); }
+
+    function renderAdminCourses() {
+        const rows=APP.courses.length?APP.courses.map(c=>'<tr><td><div style="display:flex;align-items:center;gap:0.75rem;"><span style="font-size:1.3rem;">'+Utils.escapeHtml(c.icon||'\u{1F4DA}')+'</span><div><strong>'+Utils.escapeHtml(c.title)+'</strong><div style="font-size:0.72rem;color:var(--gray-300);">'+Utils.escapeHtml(c.slug||'')+' &middot; '+Utils.escapeHtml(c.difficulty||'beginner')+'</div></div></div></td><td><span class="status-badge status-active">'+Utils.escapeHtml(c.category||'')+'</span></td><td><strong>'+Utils.formatCurrency(c.price)+'</strong>'+(c.original_price?'<span style="text-decoration:line-through;color:var(--gray-300);font-size:0.72rem;margin-left:0.3rem;">'+Utils.formatCurrency(c.original_price)+'</span>':'')+'</td><td><span class="status-badge '+(c.is_published?'status-active':'status-draft')+'">'+(c.is_published?'Live':'Draft')+'</span></td><td style="white-space:nowrap;"><button class="btn btn-ghost btn-sm" onclick="editCourse(\''+c.id+'\')" title="Edit">&#x270F;</button> <button class="btn btn-ghost btn-sm" onclick="duplicateCourse(\''+c.id+'\')" title="Duplicate">&#x1F4CB;</button> <button class="btn btn-ghost btn-sm" onclick="toggleCoursePublish(\''+c.id+'\','+(!c.is_published)+')" title="'+(c.is_published?'Unpublish':'Publish')+'">'+(c.is_published?'&#x1F6D1;':'&#x1F680;')+'</button> <button class="btn btn-danger btn-sm" onclick="deleteCourse(\''+c.id+'\')" title="Delete">&#x1F5D1;</button></td></tr>').join(''):'<tr><td colspan="5"><div class="empty-state"><div class="empty-state-icon">&#x1F4DA;</div><h3>No courses yet</h3><p>Create your first course to get started.</p><button class="btn btn-primary" onclick="openAddCourse()">+ Create Course</button></div></td></tr>';
+        document.getElementById('adminContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;"><div><h2 style="font-size:1.4rem;font-weight:800;">Courses</h2><p style="font-size:0.85rem;color:var(--gray-600);">Manage your course catalog &middot; '+APP.courses.filter(c=>c.is_published).length+' live, '+APP.courses.filter(c=>!c.is_published).length+' draft</p></div><div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;"><input type="text" class="search-input" placeholder="Search courses..." oninput="filterAdminCourses(this.value)"><select class="search-input" style="width:auto;padding-left:0.8rem;background-image:none;" onchange="filterCoursesByStatus(this.value)"><option value="all">All Status</option><option value="published">Published</option><option value="draft">Draft</option></select><button class="btn btn-primary" onclick="openAddCourse()">+ Add Course</button></div></div><div class="admin-table-wrapper"><table class="admin-table"><thead><tr><th>Course</th><th>Category</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminCoursesBody">'+rows+'</tbody></table></div>';
+    }
+    function filterAdminCourses(q) { q=q.toLowerCase(); const filtered=APP.courses.filter(c=>(c.title||'').toLowerCase().includes(q)||(c.category||'').toLowerCase().includes(q)||(c.slug||'').toLowerCase().includes(q)); renderFilteredCourses(filtered); }
+    function filterCoursesByStatus(v) { const filtered=v==='all'?APP.courses:v==='published'?APP.courses.filter(c=>c.is_published):APP.courses.filter(c=>!c.is_published); renderFilteredCourses(filtered); }
+    function renderFilteredCourses(list) { const tbody=document.getElementById('adminCoursesBody'); if(!tbody)return; tbody.innerHTML=list.map(c=>'<tr><td><div style="display:flex;align-items:center;gap:0.75rem;"><span style="font-size:1.3rem;">'+Utils.escapeHtml(c.icon||'\u{1F4DA}')+'</span><div><strong>'+Utils.escapeHtml(c.title)+'</strong><div style="font-size:0.72rem;color:var(--gray-300);">'+Utils.escapeHtml(c.slug||'')+'</div></div></div></td><td><span class="status-badge status-active">'+Utils.escapeHtml(c.category||'')+'</span></td><td><strong>'+Utils.formatCurrency(c.price)+'</strong></td><td><span class="status-badge '+(c.is_published?'status-active':'status-draft')+'">'+(c.is_published?'Live':'Draft')+'</span></td><td style="white-space:nowrap;"><button class="btn btn-ghost btn-sm" onclick="editCourse(\''+c.id+'\')">&#x270F;</button> <button class="btn btn-ghost btn-sm" onclick="duplicateCourse(\''+c.id+'\')">&#x1F4CB;</button> <button class="btn btn-ghost btn-sm" onclick="toggleCoursePublish(\''+c.id+'\','+(!c.is_published)+')">'+(c.is_published?'&#x1F6D1;':'&#x1F680;')+'</button> <button class="btn btn-danger btn-sm" onclick="deleteCourse(\''+c.id+'\')">&#x1F5D1;</button></td></tr>').join('')||'<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--gray-600);">No matches found</td></tr>'; }
+
+    async function toggleCoursePublish(id,publish) { try{const{error}=await db.from('courses').update({is_published:publish,published_at:publish?new Date().toISOString():null}).eq('id',id); if(error)throw error; showToast(publish?'Course published!':'Course unpublished'); await fetchCourses(); updateSidebarCounts(); renderAdminCourses();}catch(e){showToast('Error: '+e.message,'error');} }
+    async function duplicateCourse(id) { const c=APP.courses.find(x=>x.id==id); if(!c)return; const dup={title:c.title+' (Copy)',slug:(c.slug||'')+'-copy',short_description:c.short_description||'',description:c.description||'',price:c.price||0,original_price:c.original_price||null,category:c.category||'general',difficulty:c.difficulty||'beginner',thumbnail_url:c.thumbnail_url||'',is_published:false,is_featured:false}; const r=await saveCourseToDb(dup); if(!r.success){showToast('Error: '+(r.error?.message||'Unknown'),'error');return;} showToast('Course duplicated as draft!'); await fetchCourses(); updateSidebarCounts(); renderAdminCourses(); }
+
+    function renderAdminUsers() {
+        const admins=APP.users.filter(u=>u.role==='admin').length, students=APP.users.length-admins;
+        document.getElementById('adminContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;"><div><h2 style="font-size:1.4rem;font-weight:800;">Users</h2><p style="font-size:0.85rem;color:var(--gray-600);">'+APP.users.length+' total &middot; '+admins+' admin &middot; '+students+' students</p></div><div style="display:flex;gap:0.75rem;align-items:center;"><input type="text" class="search-input" placeholder="Search users..." oninput="filterAdminUsers(this.value)"><select class="search-input" style="width:auto;padding-left:0.8rem;background-image:none;" onchange="filterUsersByRole(this.value)"><option value="all">All Roles</option><option value="admin">Admin</option><option value="student">Student</option></select></div></div><div class="admin-table-wrapper"><table class="admin-table"><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead><tbody id="adminUsersBody">'+renderUserRows(APP.users)+'</tbody></table></div>';
+    }
+    function renderUserRows(list) { return list.map(u=>'<tr><td><div style="display:flex;align-items:center;gap:0.75rem;"><div style="width:34px;height:34px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.75rem;color:var(--primary);">'+Utils.escapeHtml(((u.first_name||'')[0]||'')+((u.last_name||'')[0]||''))+'</div><div><strong style="font-size:0.88rem;">'+Utils.escapeHtml((u.first_name||'')+' '+(u.last_name||''))+'</strong><div style="font-size:0.7rem;color:var(--gray-300);">@'+Utils.escapeHtml(u.username||'user')+'</div></div></div></td><td style="font-size:0.82rem;">'+Utils.escapeHtml(u.email||'')+'</td><td><span class="status-badge '+(u.role==='admin'?'status-draft':'status-active')+'">'+Utils.escapeHtml(u.role||'student')+'</span></td><td><span class="status-badge '+(u.is_active!==false?'status-active':'status-inactive')+'">'+(u.is_active!==false?'Active':'Blocked')+'</span></td><td style="font-size:0.82rem;">'+Utils.formatDate(u.created_at)+'</td><td style="white-space:nowrap;"><button class="btn btn-ghost btn-sm" onclick="toggleUserRole(\''+u.id+'\',\''+u.role+'\')" title="Toggle Role">'+(u.role==='admin'?'&#x1F464;':'&#x1F451;')+'</button><button class="btn btn-ghost btn-sm" onclick="toggleUserStatus(\''+u.id+'\','+(u.is_active!==false)+')" title="'+(u.is_active!==false?'Block':'Unblock')+'">'+(u.is_active!==false?'&#x1F6AB;':'&#x2705;')+'</button></td></tr>').join(''); }
+    function filterAdminUsers(q) { q=q.toLowerCase(); const filtered=APP.users.filter(u=>((u.first_name||'')+' '+(u.last_name||'')+' '+(u.email||'')+' '+(u.username||'')).toLowerCase().includes(q)); document.getElementById('adminUsersBody').innerHTML=renderUserRows(filtered); }
+    function filterUsersByRole(v) { const filtered=v==='all'?APP.users:APP.users.filter(u=>(u.role||'student')===v); document.getElementById('adminUsersBody').innerHTML=renderUserRows(filtered); }
+
+    async function toggleUserRole(id,currentRole) { const newRole=currentRole==='admin'?'student':'admin'; adminConfirm('Change this user\'s role to <strong>'+newRole+'</strong>?', async()=>{ try{const{error}=await db.from('profiles').update({role:newRole}).eq('id',id); if(error)throw error; showToast('Role updated to '+newRole); await fetchUsers(); renderAdminUsers(); updateSidebarCounts();}catch(e){showToast('Error: '+e.message,'error');} }); }
+    async function toggleUserStatus(id,isActive) { const action=isActive?'block':'unblock'; adminConfirm('Are you sure you want to <strong>'+action+'</strong> this user?', async()=>{ try{const{error}=await db.from('profiles').update({is_active:!isActive}).eq('id',id); if(error)throw error; showToast('User '+action+'ed!'); await fetchUsers(); renderAdminUsers();}catch(e){showToast('Error: '+e.message,'error');} }); }
+
+    function renderAdminOrders() {
+        const completed=APP.orders.filter(o=>o.status==='completed').length, pending=APP.orders.filter(o=>o.status==='pending').length;
+        const totalRev=APP.orders.filter(o=>o.status==='completed').reduce((a,o)=>a+(o.total_amount||o.amount||0),0);
+        document.getElementById('adminContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;"><div><h2 style="font-size:1.4rem;font-weight:800;">Orders</h2><p style="font-size:0.85rem;color:var(--gray-600);">'+APP.orders.length+' total &middot; '+completed+' completed &middot; '+pending+' pending &middot; Revenue: '+Utils.formatCurrency(totalRev)+'</p></div><div style="display:flex;gap:0.75rem;align-items:center;"><input type="text" class="search-input" placeholder="Search orders..." oninput="filterAdminOrders(this.value)"><select class="search-input" style="width:auto;padding-left:0.8rem;background-image:none;" onchange="filterOrdersByStatus(this.value)"><option value="all">All</option><option value="completed">Completed</option><option value="pending">Pending</option><option value="failed">Failed</option></select></div></div><div class="admin-table-wrapper"><table class="admin-table"><thead><tr><th>Order ID</th><th>Customer</th><th>Course</th><th>Amount</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adminOrdersBody">'+renderOrderRows(APP.orders)+'</tbody></table></div>';
+    }
+    function renderOrderRows(list) { return list.length?list.map(o=>'<tr><td style="font-family:monospace;font-size:0.78rem;">'+Utils.escapeHtml(o.order_number||String(o.id).slice(0,8))+'</td><td>'+Utils.escapeHtml(o.profiles?.full_name||'')+'<div style="font-size:0.7rem;color:var(--gray-300);">'+Utils.escapeHtml(o.profiles?.email||'')+'</div></td><td>'+Utils.escapeHtml(o.courses?.title||'')+'</td><td><strong>'+Utils.formatCurrency(o.total_amount||o.amount||0)+'</strong></td><td style="font-size:0.82rem;">'+Utils.formatDate(o.created_at)+'</td><td><span class="status-badge status-'+(o.status==='completed'?'active':o.status==='pending'?'draft':'inactive')+'">'+Utils.escapeHtml(o.status)+'</span></td><td style="white-space:nowrap;">'+(o.status==='pending'?'<button class="btn btn-success btn-sm" onclick="approveOrder(\''+o.id+'\',\''+o.user_id+'\',\''+o.course_id+'\')" title="Approve">&#x2705; Approve</button> <button class="btn btn-danger btn-sm" onclick="rejectOrder(\''+o.id+'\')" title="Reject">&#x274C;</button>':'<span style="font-size:0.75rem;color:var(--gray-300);">'+(o.status==='completed'?'Approved':'Rejected')+'</span>')+'</td></tr>').join(''):'<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">&#x1F9FE;</div><h3>No orders yet</h3><p>Orders will appear here when students make purchases.</p></div></td></tr>'; }
+    function filterAdminOrders(q) { q=q.toLowerCase(); const filtered=APP.orders.filter(o=>((o.profiles?.full_name||'')+' '+(o.profiles?.email||'')+' '+(o.courses?.title||'')+' '+(o.order_number||o.id)).toLowerCase().includes(q)); document.getElementById('adminOrdersBody').innerHTML=renderOrderRows(filtered); }
+    function filterOrdersByStatus(v) { const filtered=v==='all'?APP.orders:APP.orders.filter(o=>o.status===v); document.getElementById('adminOrdersBody').innerHTML=renderOrderRows(filtered); }
+
+    async function updateOrderStatus(id,status) { adminConfirm('Mark this order as <strong>'+status+'</strong>?', async()=>{ try{const{error}=await db.from('orders').update({status}).eq('id',id); if(error)throw error; showToast('Order marked as '+status); await fetchOrders(); renderAdminOrders(); updateSidebarCounts();}catch(e){showToast('Error: '+e.message,'error');} }); }
+
+    function renderAdminEnrollments() {
+        document.getElementById('adminContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;"><div><h2 style="font-size:1.4rem;font-weight:800;">Enrollments</h2><p style="font-size:0.85rem;color:var(--gray-600);">'+APP.enrollments.length+' total enrollments</p></div><input type="text" class="search-input" placeholder="Search..." oninput="filterAdminEnrollments(this.value)"></div><div class="admin-table-wrapper"><table class="admin-table"><thead><tr><th>Student</th><th>Course</th><th>Category</th><th>Price Paid</th><th>Status</th><th>Enrolled On</th></tr></thead><tbody id="adminEnrollBody">'+(APP.enrollments.length?APP.enrollments.map(e=>'<tr><td>'+Utils.escapeHtml(e.profiles?.full_name||e.profiles?.email||'')+'</td><td><strong>'+Utils.escapeHtml(e.courses?.title||'')+'</strong></td><td>'+Utils.escapeHtml(e.courses?.category||'')+'</td><td>'+Utils.formatCurrency(e.courses?.price||0)+'</td><td><span class="status-badge status-active">'+Utils.escapeHtml(e.status||'active')+'</span></td><td>'+Utils.formatDate(e.enrolled_at)+'</td></tr>').join(''):'<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">&#x1F393;</div><h3>No enrollments yet</h3><p>Enrollments appear when students purchase courses.</p></div></td></tr>')+'</tbody></table></div>';
+    }
+    function filterAdminEnrollments(q) { q=q.toLowerCase(); const filtered=APP.enrollments.filter(e=>((e.profiles?.full_name||'')+' '+(e.courses?.title||'')).toLowerCase().includes(q)); document.getElementById('adminEnrollBody').innerHTML=filtered.map(e=>'<tr><td>'+Utils.escapeHtml(e.profiles?.full_name||'')+'</td><td><strong>'+Utils.escapeHtml(e.courses?.title||'')+'</strong></td><td>'+Utils.escapeHtml(e.courses?.category||'')+'</td><td>'+Utils.formatCurrency(e.courses?.price||0)+'</td><td><span class="status-badge status-active">'+Utils.escapeHtml(e.status||'active')+'</span></td><td>'+Utils.formatDate(e.enrolled_at)+'</td></tr>').join(''); }
+
+    function renderAdminSettings() {
+        document.getElementById('adminContent').innerHTML=`<div style="margin-bottom:1.5rem;"><h2 style="font-size:1.4rem;font-weight:800;">Settings</h2><p style="font-size:0.85rem;color:var(--gray-600);">System configuration and admin tools</p></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;">
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;"><h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">&#x1F50C; Database</h3><p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem;"><strong>Status:</strong> <span style="color:var(--success);">&#x2705; Connected</span></p><p style="font-size:0.78rem;color:var(--gray-300);word-break:break-all;">${Utils.escapeHtml(SUPABASE_URL)}</p></div>
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;"><h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">&#x1F464; Admin Account</h3><p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.3rem;"><strong>Name:</strong> ${Utils.escapeHtml(APP.currentUser.name)}</p><p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.3rem;"><strong>Email:</strong> ${Utils.escapeHtml(APP.currentUser.email)}</p><p style="font-size:0.85rem;color:var(--gray-600);"><strong>Role:</strong> <span class="status-badge status-draft">admin</span></p></div>
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;"><h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">&#x1F4CA; Platform Stats</h3><p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.3rem;">&#x1F4DA; ${APP.courses.length} Courses (${APP.courses.filter(c=>c.is_published).length} live)</p><p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.3rem;">&#x1F465; ${APP.users.length} Users</p><p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.3rem;">&#x1F9FE; ${APP.orders.length} Orders</p><p style="font-size:0.85rem;color:var(--gray-600);">&#x1F393; ${APP.enrollments.length} Enrollments</p></div>
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;"><h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">&#x1F6E0; Quick Actions</h3><div style="display:flex;flex-direction:column;gap:0.5rem;"><button class="btn btn-ghost btn-sm" onclick="refreshAdminData()" style="justify-content:center;">&#x1F504; Refresh All Data</button><button class="btn btn-ghost btn-sm" onclick="exportData()" style="justify-content:center;">&#x1F4E5; Export JSON</button><button class="btn btn-ghost btn-sm" onclick="exportCSV()" style="justify-content:center;">&#x1F4C4; Export CSV (Orders)</button><button class="btn btn-ghost btn-sm" onclick="clearLocalData()" style="justify-content:center;">&#x1F9F9; Clear Local Cache</button></div></div>
+        </div>
+        <div style="margin-top:1.5rem;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;"><h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">&#x2328; Keyboard Shortcuts</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.5rem;font-size:0.82rem;color:var(--gray-600);"><div><kbd style="background:var(--gray-50);padding:0.15rem 0.4rem;border-radius:4px;border:1px solid var(--gray-200);font-size:0.75rem;">Esc</kbd> Close panel/modal</div><div><kbd style="background:var(--gray-50);padding:0.15rem 0.4rem;border-radius:4px;border:1px solid var(--gray-200);font-size:0.75rem;">R</kbd> Refresh data</div><div><kbd style="background:var(--gray-50);padding:0.15rem 0.4rem;border-radius:4px;border:1px solid var(--gray-200);font-size:0.75rem;">N</kbd> New course</div></div></div>`;
+    }
+    function exportData() { const data={courses:APP.courses,users:APP.users.map(u=>({name:(u.first_name||'')+' '+(u.last_name||''),email:u.email,role:u.role,joined:u.created_at})),orders:APP.orders.map(o=>({id:o.order_number||o.id,customer:o.profiles?.full_name,course:o.courses?.title,amount:o.total_amount||o.amount,status:o.status,date:o.created_at})),enrollments:APP.enrollments.map(e=>({student:e.profiles?.full_name,course:e.courses?.title,status:e.status,date:e.enrolled_at}))}; const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='healthiq-export-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); showToast('Data exported!'); }
+    function exportCSV() { if(!APP.orders.length){showToast('No orders to export','warning');return;} const headers='Order ID,Customer,Email,Course,Amount,Status,Date\n'; const rows=APP.orders.map(o=>[o.order_number||o.id,o.profiles?.full_name||'',o.profiles?.email||'',o.courses?.title||'',o.total_amount||o.amount||0,o.status||'',o.created_at||''].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n'); const blob=new Blob([headers+rows],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='healthiq-orders-'+new Date().toISOString().slice(0,10)+'.csv'; a.click(); showToast('CSV exported!'); }
+    function clearLocalData() { localStorage.removeItem('theme'); showToast('Local cache cleared!'); }
+
+    // Admin keyboard shortcuts
+    document.addEventListener('keydown', e => {
+        if(!document.getElementById('adminPanel')?.classList.contains('active')) return;
+        if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT') return;
+        if(e.key==='r'||e.key==='R'){e.preventDefault();refreshAdminData();}
+        if(e.key==='n'||e.key==='N'){e.preventDefault();openAddCourse();}
+        if(e.key==='Escape'){const modals=document.querySelectorAll('.modal-overlay.active'); if(modals.length)return; closeAdminPanel();}
+    });
+
+    // ===== COURSE CRUD =====
+    function autoSlug(v) { document.getElementById('courseSlug').value=v.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+    function openAddCourse() { document.getElementById('courseModalTitle').textContent='Add New Course'; document.getElementById('editCourseId').value=''; ['courseTitle','courseSlug','courseShortDesc','courseDesc','coursePrice','courseOriginalPrice','courseBadge','courseIcon','courseImageUrl'].forEach(id=>document.getElementById(id).value=''); openModal('course'); }
+    function editCourse(id) { const c=APP.courses.find(x=>x.id==id); if(!c)return; document.getElementById('courseModalTitle').textContent='Edit Course'; document.getElementById('editCourseId').value=id; document.getElementById('courseTitle').value=c.title||''; document.getElementById('courseSlug').value=c.slug||''; document.getElementById('courseShortDesc').value=c.short_description||''; document.getElementById('courseDesc').value=c.description||''; document.getElementById('coursePrice').value=c.price||''; document.getElementById('courseOriginalPrice').value=c.original_price||''; document.getElementById('courseCategory').value=c.category||'general'; document.getElementById('courseDifficulty').value=c.difficulty||'beginner'; document.getElementById('coursePublished').value=c.is_published!==false?'true':'false'; document.getElementById('courseFeatured').value=c.is_featured?'true':'false'; document.getElementById('courseBadge').value=c.badge||''; document.getElementById('courseIcon').value=c.icon||''; document.getElementById('courseImageUrl').value=c.image_url||c.thumbnail_url||''; openModal('course'); }
+    async function saveCourse(event) {
+        event.preventDefault();
+        const id=document.getElementById('editCourseId').value, title=document.getElementById('courseTitle').value.trim(), desc=document.getElementById('courseDesc').value.trim(), img=document.getElementById('courseImageUrl').value.trim();
+        if(!title||!desc){showToast('Title & Description required','error');return;}
+        const d={title,slug:document.getElementById('courseSlug').value.trim()||title.toLowerCase().replace(/[^a-z0-9]+/g,'-'),short_description:document.getElementById('courseShortDesc').value.trim(),price:parseFloat(document.getElementById('coursePrice').value)||0,original_price:parseFloat(document.getElementById('courseOriginalPrice').value)||null,description:desc,category:document.getElementById('courseCategory').value,difficulty:document.getElementById('courseDifficulty').value,is_published:document.getElementById('coursePublished').value==='true',is_featured:document.getElementById('courseFeatured').value==='true',thumbnail_url:img};
+        if(d.is_published)d.published_at=new Date().toISOString(); if(id)d.id=id;
+        const r=await saveCourseToDb(d); if(!r.success){showToast('Error: '+(r.error?.message||'Unknown'),'error');return;}
+        showToast(id?'Course updated!':'Course added!'); closeModal('course'); await fetchCourses(); if(document.getElementById('adminPanel').classList.contains('active'))renderAdminCourses();
+    }
+    async function deleteCourse(id) { adminConfirm('Delete this course permanently? This cannot be undone.', async()=>{ const r=await deleteCourseFromDb(id); if(!r.success){showToast('Error','error');return;} showToast('Deleted'); await fetchCourses(); updateSidebarCounts(); if(document.getElementById('adminPanel').classList.contains('active'))renderAdminCourses(); }); }
+
+    // ===== ENROLLMENT (UPI Payment Flow) =====
+    function enrollCourse(courseId, title, price) {
+        if(!APP.currentUser){openModal('login');showToast('Please login first','warning');return;}
+        if(APP.myEnrollments.find(e=>String(e.course_id)===String(courseId)&&e.status==='active')){showToast('Already enrolled!','warning');return;}
+        // Check if pending order exists
+        const pending=APP.orders?.find(o=>String(o.course_id)===String(courseId)&&o.user_id===APP.currentUser.id&&o.status==='pending');
+        if(pending){showToast('Payment already submitted, waiting for admin approval.','warning');return;}
+        showPaymentModal(courseId, title, price);
+    }
+
+    function showPaymentModal(courseId, title, price) {
+        let m=document.getElementById('paymentModal'); if(!m){m=document.createElement('div');m.id='paymentModal';m.className='modal-overlay';document.body.appendChild(m);}
+        const upiId='thehealthiqinfo@oksbi';
+        const upiUrl='upi://pay?pa='+encodeURIComponent(upiId)+'&pn=HealthIQ&am='+price+'&cu=INR&tn='+encodeURIComponent(title);
+        const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(upiUrl);
+        m.innerHTML=`<div class="modal" style="max-width:420px;text-align:center;">
+            <button class="modal-close" onclick="document.getElementById('paymentModal').classList.remove('active')">&times;</button>
+            <h2 style="font-size:1.2rem;">&#x1F4B3; Pay for Course</h2>
+            <p class="modal-subtitle" style="margin-bottom:0.5rem;">Complete payment to access: <strong>${Utils.escapeHtml(title)}</strong></p>
+            <div style="background:var(--primary-light);border-radius:var(--radius);padding:1.25rem;margin:1rem 0;">
+                <p style="font-size:2rem;font-weight:800;color:var(--primary);margin-bottom:0.5rem;">${Utils.formatCurrency(price)}</p>
+                <img src="${qrUrl}" alt="UPI QR Code" style="width:200px;height:200px;border-radius:8px;border:3px solid var(--white);margin:0.75rem auto;display:block;" onerror="this.style.display='none'">
+                <p style="font-size:0.85rem;color:var(--gray-600);margin-top:0.5rem;">Scan QR or pay to UPI ID:</p>
+                <p style="font-size:0.95rem;font-weight:700;color:var(--gray-900);background:var(--white);padding:0.5rem;border-radius:6px;margin-top:0.3rem;user-select:all;">${Utils.escapeHtml(upiId)}</p>
+            </div>
+            <p style="font-size:0.82rem;color:var(--gray-600);margin-bottom:1rem;">After payment, click below to submit for verification.</p>
+            <div style="display:flex;gap:0.75rem;">
+                <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="document.getElementById('paymentModal').classList.remove('active')">Cancel</button>
+                <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="confirmPayment('${courseId}','${Utils.escapeHtml(title).replace(/'/g,"\\'")}',${price})">&#x2705; I Have Paid</button>
+            </div>
+        </div>`;
+        m.classList.add('active');
+    }
+
+    function confirmPayment(courseId, title, price) {
+        document.getElementById('paymentModal').classList.remove('active');
+        // Show confirmation dialog
+        let m=document.getElementById('payConfirmModal'); if(!m){m=document.createElement('div');m.id='payConfirmModal';m.className='modal-overlay';document.body.appendChild(m);}
+        m.innerHTML=`<div class="modal" style="max-width:380px;text-align:center;">
+            <button class="modal-close" onclick="document.getElementById('payConfirmModal').classList.remove('active')">&times;</button>
+            <h2 style="font-size:1.2rem;">&#x2753; Confirm Payment</h2>
+            <p style="color:var(--gray-600);font-size:0.9rem;margin:1rem 0;">Have you completed the UPI payment of <strong>${Utils.formatCurrency(price)}</strong> for <strong>${title}</strong>?</p>
+            <div style="display:flex;gap:0.75rem;margin-top:1.5rem;">
+                <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="document.getElementById('payConfirmModal').classList.remove('active')">&#x274C; No</button>
+                <button class="btn btn-success" style="flex:1;justify-content:center;" onclick="submitPaymentForApproval('${courseId}','${title}',${price})">&#x2705; Yes, I Paid</button>
+            </div>
+        </div>`;
+        m.classList.add('active');
+    }
+
+    async function submitPaymentForApproval(courseId, title, price) {
+        document.getElementById('payConfirmModal').classList.remove('active');
+        try {
+            const orderData={user_id:APP.currentUser.id,course_id:courseId,amount:price,currency:'INR',status:'pending',payment_method:'upi',payment_verified:false};
+            console.log('Inserting order:',orderData);
+            const {data,error}=await db.from('orders').insert(orderData).select();
+            console.log('Insert result:',{data,error});
+            if(error)throw error;
+            await fetchMyOrders(); renderCourses();
+            showToast('Payment submitted! Admin will verify and grant access shortly.','success');
+        } catch(e){console.error('submitPayment error:',e);showToast('Error: '+(e.message||'Failed'),'error');}
+    }
+
+    // Admin: Approve/Reject payment
+    async function approveOrder(orderId, userId, courseId) {
+        adminConfirm('Approve this payment and grant course access?', async()=>{
+            try {
+                const{error:oe}=await db.from('orders').update({status:'completed',payment_verified:true,paid_at:new Date().toISOString()}).eq('id',orderId);
+                if(oe)throw oe;
+                // Create enrollment
+                const{error:ee}=await db.from('enrollments').insert({user_id:userId,course_id:courseId,order_id:orderId,status:'active',progress:0});
+                if(ee)throw ee;
+                showToast('Payment approved! User can now access the course.','success');
+                await fetchOrders(); renderAdminOrders(); updateSidebarCounts();
+            }catch(e){showToast('Error: '+e.message,'error');}
+        });
+    }
+    async function rejectOrder(orderId) {
+        adminConfirm('Reject this payment?', async()=>{
+            try {
+                const{error}=await db.from('orders').update({status:'failed',payment_verified:false}).eq('id',orderId);
+                if(error)throw error;
+                showToast('Payment rejected.','warning');
+                await fetchOrders(); renderAdminOrders(); updateSidebarCounts();
+            }catch(e){showToast('Error: '+e.message,'error');}
+        });
+    }
+
+    // ===== USER MENU =====
+    async function showMyCourses() {
+        document.getElementById('userMenu').classList.remove('active');
+        if(!APP.currentUser){openModal('login');return;} await fetchMyEnrollments();
+        if(!APP.myEnrollments.length){showToast('No courses yet. Browse to get started!','warning');return;}
+        let m=document.getElementById('myCoursesModal'); if(!m){m=document.createElement('div');m.id='myCoursesModal';m.className='modal-overlay';document.body.appendChild(m);}
+        m.innerHTML='<div class="modal" style="max-width:500px;max-height:80vh;overflow-y:auto;"><button class="modal-close" onclick="document.getElementById(\'myCoursesModal\').classList.remove(\'active\')">&times;</button><h2>My Courses</h2><p class="modal-subtitle">'+APP.myEnrollments.length+' enrolled</p><div style="margin-top:1rem;">'+APP.myEnrollments.map(e=>{const c=APP.courses.find(x=>x.id===e.course_id)||{}; return '<div style="padding:0.75rem;border:1px solid var(--gray-200);border-radius:8px;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.75rem;"><span style="font-size:1.5rem;">\u{1F4DA}</span><div style="flex:1;"><strong style="font-size:0.9rem;">'+Utils.escapeHtml(c.title||'Course')+'</strong><div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.3rem;"><div style="flex:1;height:5px;background:var(--gray-200);border-radius:3px;"><div style="width:'+(e.progress||0)+'%;height:100%;background:var(--success);border-radius:3px;"></div></div><span style="font-size:0.7rem;">'+(e.progress||0)+'%</span></div></div></div>';}).join('')+'</div></div>';
+        m.classList.add('active');
+    }
+
+    // ===== COUNTERS =====
+    const cObs=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){const el=en.target,tgt=+el.dataset.target,start=performance.now();(function up(now){const p=Math.min((now-start)/2000,1);el.textContent=Math.floor(p*tgt).toLocaleString()+(tgt===98?'%':'+');if(p<1)requestAnimationFrame(up);})(start);cObs.unobserve(el);}});},{threshold:0.5});
+    document.querySelectorAll('.counter').forEach(c=>cObs.observe(c));
+
+    // ===== INIT =====
+    async function appInit() { try{await fetchCourses();await initAuth();if(APP.currentUser){await fetchMyEnrollments();await fetchMyOrders();renderCourses();}}catch(e){console.error(e);} }
+    async function fetchMyOrders() { if(!APP.currentUser)return; try{const{data,error}=await db.from('orders').select('id,course_id,user_id,status').eq('user_id',APP.currentUser.id); console.log('fetchMyOrders:',{data,error}); if(!error)APP.orders=data||[];}catch(e){console.error('fetchMyOrders error:',e);} }
+    </script>
+</body>
+</html>
