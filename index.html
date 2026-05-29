@@ -890,7 +890,7 @@
 
         // Auto-create/update hidden course for this plan
         const slug='pricing-plan-'+(i+1);
-        const courseData={title:title,slug:slug,short_description:'Pricing plan: '+title,description:title,price:price,original_price:original_price||price,category:'general',difficulty:'beginner',is_published:false,is_featured:false,thumbnail_url:'',pdf_url:links[0]?.url||''};
+        const courseData={title:title,slug:slug,short_description:'Pricing plan: '+title,description:title,price:price,original_price:original_price||price,category:'general',difficulty:'beginner',is_published:false,is_featured:false,pdf_url:links[0]?.url||null};
         const existing=APP.courses.find(c=>c.slug===slug);
         if(existing) courseData.id=existing.id;
         const r=await saveCourseToDb(courseData);
