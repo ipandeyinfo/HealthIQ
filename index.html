@@ -409,7 +409,7 @@
             <div><h4>HealthIQ</h4><p>Premium BHMS &amp; MD Homoeopathy notes crafted by a Gold Medalist for aspiring doctors and homoeopathic practitioners.</p></div>
             <div><h4>Quick Links</h4><a href="javascript:void(0)" onclick="scrollToEl('courses')">Courses</a><a href="javascript:void(0)" onclick="scrollToEl('pricing')">Pricing</a><a href="javascript:void(0)" onclick="scrollToEl('faq')">FAQ</a></div>
             <div><h4>Legal</h4><a href="javascript:void(0)">Terms of Service</a><a href="javascript:void(0)">Privacy Policy</a><a href="javascript:void(0)">Refund Policy</a></div>
-            <div><h4>Contact</h4><a href="mailto:support@healthiq.in">support@healthiq.in</a><a href="https://wa.me/919876543210">WhatsApp: +91 98765 43210</a></div>
+            <div><h4>Contact</h4><a href="mailto:support@healthiq.in" id="footerEmail">support@healthiq.in</a><a href="https://wa.me/919876543210" id="footerWhatsapp">WhatsApp: +91 98765 43210</a></div>
         </div>
         <div class="footer-bottom"><p>&copy; 2026 HealthIQ. All rights reserved.</p></div>
     </footer>
@@ -612,8 +612,12 @@
         // Courses section
         const ct=document.getElementById('coursesTitle'); if(ct) ct.textContent=s.courses_title||DEFAULT_SETTINGS.courses_title;
         const cs=document.getElementById('coursesSubtitle'); if(cs) cs.textContent=s.courses_subtitle||DEFAULT_SETTINGS.courses_subtitle;
-        // WhatsApp
-        const wa=document.querySelector('.whatsapp-float'); if(wa) wa.href='https://wa.me/'+(s.whatsapp_number||DEFAULT_SETTINGS.whatsapp_number);
+        // WhatsApp & Contact
+        const waNum=s.whatsapp_number||DEFAULT_SETTINGS.whatsapp_number;
+        const email=s.contact_email||DEFAULT_SETTINGS.contact_email;
+        const wa=document.querySelector('.whatsapp-float'); if(wa) wa.href='https://wa.me/'+waNum;
+        const fe=document.getElementById('footerEmail'); if(fe){fe.href='mailto:'+email; fe.textContent=email;}
+        const fw=document.getElementById('footerWhatsapp'); if(fw){fw.href='https://wa.me/'+waNum; fw.textContent='WhatsApp: +'+waNum.slice(0,2)+' '+waNum.slice(2,7)+' '+waNum.slice(7);}
     }
 
     // ===== DATA =====
