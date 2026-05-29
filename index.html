@@ -736,6 +736,7 @@
         event.preventDefault();
         const id=document.getElementById('editCourseId').value, title=document.getElementById('courseTitle').value.trim(), desc=document.getElementById('courseDesc').value.trim(), img=document.getElementById('courseImageUrl').value.trim(), pdfUrl=document.getElementById('coursePdfUrl').value.trim(), shortDesc=document.getElementById('courseShortDesc').value.trim(), price=document.getElementById('coursePrice').value, origPrice=document.getElementById('courseOriginalPrice').value;
         if(!title||!desc||!img||!pdfUrl||!shortDesc||!price||!origPrice){showToast('All fields marked * are mandatory','error');return;}
+        if(parseFloat(origPrice)<parseFloat(price)){showToast('Original Price must be ≥ Price (it is the before-discount price)','error');return;}
         const d={title,slug:document.getElementById('courseSlug').value.trim()||title.toLowerCase().replace(/[^a-z0-9]+/g,'-'),short_description:shortDesc,price:parseFloat(price)||0,original_price:parseFloat(origPrice)||null,description:desc,category:document.getElementById('courseCategory').value,difficulty:document.getElementById('courseDifficulty').value,is_published:document.getElementById('coursePublished').value==='true',is_featured:document.getElementById('courseFeatured').value==='true',thumbnail_url:img,pdf_url:pdfUrl};
         if(d.is_published)d.published_at=new Date().toISOString(); if(id)d.id=id;
         const r=await saveCourseToDb(d); if(!r.success){showToast('Error: '+(r.error?.message||'Unknown'),'error');return;}
