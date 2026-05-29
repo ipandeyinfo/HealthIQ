@@ -639,7 +639,7 @@
         try { if(d.id){const{error}=await db.from('courses').update(o).eq('id',d.id); if(error)throw error;} else {const{error}=await db.from('courses').insert(o); if(error)throw error;} return {success:true}; }
         catch(e){return {success:false,error:e};}
     }
-    async function deleteCourseFromDb(id) { if(!isSupabaseConfigured()) return {success:false}; try{const{error}=await db.from('courses').delete().eq('id',id); if(error)throw error; return{success:true};}catch(e){return{success:false,error:e};} }
+    async function deleteCourseFromDb(id) { if(!isSupabaseConfigured()) return {success:false}; try{ await db.from('enrollments').delete().eq('course_id',id); await db.from('orders').delete().eq('course_id',id); const{error}=await db.from('courses').delete().eq('id',id); if(error)throw error; return{success:true};}catch(e){return{success:false,error:e};} }
 
     // ===== AUTH =====
     async function handleLogin(event) {
