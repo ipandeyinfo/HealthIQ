@@ -285,6 +285,27 @@
         .mobile-nav { display: none; position: fixed; top: 58px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 1rem 1.5rem; z-index: 999; flex-direction: column; gap: 0.75rem; box-shadow: var(--shadow-md); }
         .mobile-nav.active { display: flex; }
         .mobile-nav a { text-decoration: none; color: var(--gray-800); font-weight: 500; padding: 0.6rem 0; }
+
+        /* Settings Cards */
+        .settings-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); margin-bottom: 1.25rem; overflow: hidden; transition: var(--transition); }
+        .settings-card:hover { border-color: var(--primary); box-shadow: 0 2px 12px rgba(15,111,236,0.06); }
+        .settings-card-header { display: flex; align-items: center; gap: 1rem; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); }
+        .settings-card-header .settings-icon { font-size: 1.5rem; }
+        .settings-card-header h3 { font-size: 0.95rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.15rem; }
+        .settings-card-header p { font-size: 0.78rem; color: var(--gray-600); }
+        .settings-card-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+        .settings-card-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--gray-100); background: var(--gray-50); display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .settings-field { display: flex; flex-direction: column; gap: 0.35rem; }
+        .settings-field label { font-size: 0.8rem; font-weight: 600; color: var(--gray-600); }
+        .settings-field input, .settings-field textarea { padding: 0.6rem 0.9rem; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 0.88rem; font-family: inherit; transition: var(--transition); background: var(--white); color: var(--gray-800); }
+        .settings-field input:focus, .settings-field textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,111,236,0.1); outline: none; }
+        .settings-field textarea { resize: vertical; min-height: 60px; }
+        .settings-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .settings-info-row { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--gray-100); font-size: 0.85rem; }
+        .settings-info-row:last-child { border-bottom: none; }
+        .settings-info-row span:first-child { color: var(--gray-600); font-weight: 500; }
+        .settings-info-row span:last-child { font-weight: 600; color: var(--gray-800); }
+        @media (max-width: 600px) { .settings-grid-2 { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -321,9 +342,9 @@
 
     <section class="hero">
         <div class="hero-content">
-            <span class="hero-badge">&#x1F3C6; Trusted by 10,000+ Medical Students</span>
-            <h1>Premium <span class="highlight">Medical</span> &amp; PhD Notes</h1>
-            <p>High-yield handwritten notes, research material, revision PDFs, and clinical case resources &mdash; crafted by experts for your success.</p>
+            <span class="hero-badge" id="heroBadge">&#x1F3C6; Trusted by 10,000+ Medical Students</span>
+            <h1 id="heroTitle">Premium <span class="highlight">Medical</span> &amp; PhD Notes</h1>
+            <p id="heroDesc">High-yield handwritten notes, research material, revision PDFs, and clinical case resources &mdash; crafted by experts for your success.</p>
             <div class="hero-buttons">
                 <a href="javascript:void(0)" onclick="scrollToEl('pricing')" class="btn btn-primary btn-lg">Buy Access</a>
                 <a href="javascript:void(0)" onclick="scrollToEl('courses')" class="btn btn-outline btn-lg">&#x1F4DA; Explore Courses</a>
@@ -338,7 +359,7 @@
     </section>
 
     <section id="courses" class="section">
-        <div class="section-header"><h2>Featured Courses</h2><p>Expertly curated, high-yield notes designed for exam success.</p></div>
+        <div class="section-header"><h2 id="coursesTitle">Featured Courses</h2><p id="coursesSubtitle">Expertly curated, high-yield notes designed for exam success.</p></div>
         <div class="course-grid" id="courseGrid"><div class="empty-state"><p>Loading courses...</p></div></div>
     </section>
 
@@ -541,7 +562,61 @@
     }
 
     // ===== STATE =====
-    const APP = { currentUser: null, userProfile: null, courses: [], users: [], orders: [], enrollments: [], myEnrollments: [] };
+    const APP = { currentUser: null, userProfile: null, courses: [], users: [], orders: [], enrollments: [], myEnrollments: [], settings: {} };
+
+    // Default settings (fallback if DB has none)
+    const DEFAULT_SETTINGS = {
+        upi_id: 'thehealthiqinfo@oksbi',
+        hero_badge: '🏆 Trusted by 10,000+ Medical Students',
+        hero_title: 'Premium <span class="highlight">Medical</span> &amp; PhD Notes',
+        hero_description: 'High-yield handwritten notes, research material, revision PDFs, and clinical case resources — crafted by experts for your success.',
+        stat_1_value: '10000', stat_1_label: 'Students',
+        stat_2_value: '250', stat_2_label: 'Notes Available',
+        stat_3_value: '98', stat_3_label: '% Satisfaction',
+        stat_4_value: '50', stat_4_label: 'Expert Authors',
+        courses_title: 'Featured Courses',
+        courses_subtitle: 'Expertly curated, high-yield notes designed for exam success.',
+        whatsapp_number: '919876543210',
+        contact_email: 'support@healthiq.in',
+        footer_description: 'Premium medical education resources crafted by experts for aspiring doctors and researchers worldwide.'
+    };
+
+    async function fetchSettings() {
+        if(!isSupabaseConfigured()) return;
+        try { const {data,error}=await db.from('site_settings').select('key,value'); if(!error&&data) data.forEach(r=>APP.settings[r.key]=r.value); } catch(e){}
+        // Merge defaults for missing keys
+        for(const k in DEFAULT_SETTINGS){ if(!APP.settings[k]) APP.settings[k]=DEFAULT_SETTINGS[k]; }
+        applySettings();
+    }
+    async function saveSetting(key,value) {
+        if(!isSupabaseConfigured()) return;
+        APP.settings[key]=value;
+        try { const {error}=await db.from('site_settings').upsert({key,value,updated_at:new Date().toISOString()},{onConflict:'key'}); if(error)throw error; } catch(e){showToast('Save error: '+e.message,'error');}
+    }
+    async function saveMultipleSettings(obj) {
+        if(!isSupabaseConfigured()) return;
+        const rows=Object.entries(obj).map(([key,value])=>({key,value,updated_at:new Date().toISOString()}));
+        Object.assign(APP.settings, obj);
+        try { const {error}=await db.from('site_settings').upsert(rows,{onConflict:'key'}); if(error)throw error; showToast('Settings saved!'); applySettings(); } catch(e){showToast('Save error: '+e.message,'error');}
+    }
+    function applySettings() {
+        const s=APP.settings;
+        // Hero
+        const badge=document.getElementById('heroBadge'); if(badge) badge.innerHTML=s.hero_badge||DEFAULT_SETTINGS.hero_badge;
+        const title=document.getElementById('heroTitle'); if(title) title.innerHTML=s.hero_title||DEFAULT_SETTINGS.hero_title;
+        const desc=document.getElementById('heroDesc'); if(desc) desc.innerHTML=s.hero_description||DEFAULT_SETTINGS.hero_description;
+        // Stats
+        const counters=document.querySelectorAll('.stat-item');
+        if(counters[0]){counters[0].querySelector('h3').dataset.target=s.stat_1_value; counters[0].querySelector('p').textContent=s.stat_1_label;}
+        if(counters[1]){counters[1].querySelector('h3').dataset.target=s.stat_2_value; counters[1].querySelector('p').textContent=s.stat_2_label;}
+        if(counters[2]){counters[2].querySelector('h3').dataset.target=s.stat_3_value; counters[2].querySelector('p').textContent=s.stat_3_label;}
+        if(counters[3]){counters[3].querySelector('h3').dataset.target=s.stat_4_value; counters[3].querySelector('p').textContent=s.stat_4_label;}
+        // Courses section
+        const ct=document.getElementById('coursesTitle'); if(ct) ct.textContent=s.courses_title||DEFAULT_SETTINGS.courses_title;
+        const cs=document.getElementById('coursesSubtitle'); if(cs) cs.textContent=s.courses_subtitle||DEFAULT_SETTINGS.courses_subtitle;
+        // WhatsApp
+        const wa=document.querySelector('.whatsapp-float'); if(wa) wa.href='https://wa.me/'+(s.whatsapp_number||DEFAULT_SETTINGS.whatsapp_number);
+    }
 
     // ===== DATA =====
     async function fetchCourses() {
@@ -638,7 +713,7 @@
     }
 
     // ===== ADMIN =====
-    async function openAdminPanel() { if(!APP.currentUser||APP.currentUser.role!=='admin'){showToast('Access denied','error');return;} document.getElementById('adminPanel').classList.add('active'); document.getElementById('userMenu').classList.remove('active'); document.getElementById('adminUserLabel').textContent=APP.currentUser.name; renderAdminCourses(); try{ await Promise.all([fetchCourses(),fetchUsers(),fetchOrders()]); updateSidebarCounts(); renderAdminCourses(); }catch(e){ console.error('Admin fetch error:',e); } }
+    async function openAdminPanel() { if(!APP.currentUser||APP.currentUser.role!=='admin'){showToast('Access denied','error');return;} document.getElementById('adminPanel').classList.add('active'); document.getElementById('userMenu').classList.remove('active'); document.getElementById('adminUserLabel').textContent=APP.currentUser.name; renderAdminCourses(); try{ await Promise.all([fetchCourses(),fetchUsers(),fetchOrders(),fetchSettings()]); updateSidebarCounts(); renderAdminCourses(); }catch(e){ console.error('Admin fetch error:',e); } }
     function closeAdminPanel() { document.getElementById('adminPanel').classList.remove('active'); }
     function updateSidebarCounts() { const cc=document.getElementById('sidebarCourseCount'),uc=document.getElementById('sidebarUserCount'),oc=document.getElementById('sidebarOrderCount'); if(cc)cc.textContent=APP.courses.length; if(uc)uc.textContent=APP.users.length; if(oc)oc.textContent=APP.orders.length; document.getElementById('lastSyncTime').textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
     function switchAdminTab(tab,el) { document.querySelectorAll('.admin-sidebar-item').forEach(i=>i.classList.remove('active')); if(el)el.classList.add('active'); ({dashboard:renderAdminDashboard,courses:renderAdminCourses,users:renderAdminUsers,orders:renderAdminOrders,enrollments:renderAdminEnrollments,settings:renderAdminSettings})[tab]?.(); }
@@ -706,14 +781,97 @@
     function filterAdminEnrollments(q) { q=q.toLowerCase(); const filtered=APP.enrollments.filter(e=>((e.profiles?.full_name||'')+' '+(e.courses?.title||'')).toLowerCase().includes(q)); document.getElementById('adminEnrollBody').innerHTML=filtered.map(e=>'<tr><td>'+Utils.escapeHtml(e.profiles?.full_name||'')+'</td><td><strong>'+Utils.escapeHtml(e.courses?.title||'')+'</strong></td><td>'+Utils.escapeHtml(e.courses?.category||'')+'</td><td>'+Utils.formatCurrency(e.courses?.price||0)+'</td><td><span class="status-badge status-active">'+Utils.escapeHtml(e.status||'active')+'</span></td><td>'+Utils.formatDate(e.enrolled_at)+'</td></tr>').join(''); }
 
     function renderAdminSettings() {
-        document.getElementById('adminContent').innerHTML=`<div style="margin-bottom:1.5rem;"><h2 style="font-size:1.4rem;font-weight:800;">Settings</h2><p style="font-size:0.85rem;color:var(--gray-600);">System configuration and admin tools</p></div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;">
-            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;"><h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">&#x1F50C; Database</h3><p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem;"><strong>Status:</strong> <span style="color:var(--success);">&#x2705; Connected</span></p><p style="font-size:0.78rem;color:var(--gray-300);word-break:break-all;">${Utils.escapeHtml(SUPABASE_URL)}</p></div>
-            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;"><h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">&#x1F464; Admin Account</h3><p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.3rem;"><strong>Name:</strong> ${Utils.escapeHtml(APP.currentUser.name)}</p><p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.3rem;"><strong>Email:</strong> ${Utils.escapeHtml(APP.currentUser.email)}</p><p style="font-size:0.85rem;color:var(--gray-600);"><strong>Role:</strong> <span class="status-badge status-draft">admin</span></p></div>
-            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;"><h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">&#x1F4CA; Platform Stats</h3><p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.3rem;">&#x1F4DA; ${APP.courses.length} Courses (${APP.courses.filter(c=>c.is_published).length} live)</p><p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.3rem;">&#x1F465; ${APP.users.length} Users</p><p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.3rem;">&#x1F9FE; ${APP.orders.length} Orders</p><p style="font-size:0.85rem;color:var(--gray-600);">&#x1F393; ${APP.enrollments.length} Enrollments</p></div>
-            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;"><h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">&#x1F6E0; Quick Actions</h3><div style="display:flex;flex-direction:column;gap:0.5rem;"><button class="btn btn-ghost btn-sm" onclick="refreshAdminData()" style="justify-content:center;">&#x1F504; Refresh All Data</button><button class="btn btn-ghost btn-sm" onclick="exportData()" style="justify-content:center;">&#x1F4E5; Export JSON</button><button class="btn btn-ghost btn-sm" onclick="exportCSV()" style="justify-content:center;">&#x1F4C4; Export CSV (Orders)</button><button class="btn btn-ghost btn-sm" onclick="clearLocalData()" style="justify-content:center;">&#x1F9F9; Clear Local Cache</button></div></div>
+        const s=APP.settings;
+        document.getElementById('adminContent').innerHTML=`
+        <div style="margin-bottom:1.5rem;"><h2 style="font-size:1.4rem;font-weight:800;">⚙️ Site Settings</h2><p style="font-size:0.85rem;color:var(--gray-600);">Manage all website content, payment settings, and configuration. Changes go live instantly.</p></div>
+
+        <!-- Payment Settings -->
+        <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-icon">💳</span><div><h3>Payment Settings</h3><p>Configure UPI payment details shown to students</p></div></div>
+            <div class="settings-card-body">
+                <div class="settings-field"><label>UPI ID</label><input type="text" id="s_upi_id" value="${Utils.escapeHtml(s.upi_id||'')}" placeholder="yourname@upi"></div>
+            </div>
+            <div class="settings-card-footer"><button class="btn btn-primary btn-sm" onclick="saveSettingsSection('payment')">💾 Save Payment Settings</button></div>
         </div>
-        <div style="margin-top:1.5rem;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;"><h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">&#x2328; Keyboard Shortcuts</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.5rem;font-size:0.82rem;color:var(--gray-600);"><div><kbd style="background:var(--gray-50);padding:0.15rem 0.4rem;border-radius:4px;border:1px solid var(--gray-200);font-size:0.75rem;">Esc</kbd> Close panel/modal</div><div><kbd style="background:var(--gray-50);padding:0.15rem 0.4rem;border-radius:4px;border:1px solid var(--gray-200);font-size:0.75rem;">R</kbd> Refresh data</div><div><kbd style="background:var(--gray-50);padding:0.15rem 0.4rem;border-radius:4px;border:1px solid var(--gray-200);font-size:0.75rem;">N</kbd> New course</div></div></div>`;
+
+        <!-- Hero Section -->
+        <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-icon">🏠</span><div><h3>Hero Section</h3><p>Main banner content visitors see first</p></div></div>
+            <div class="settings-card-body">
+                <div class="settings-field"><label>Badge Text</label><input type="text" id="s_hero_badge" value="${Utils.escapeHtml(s.hero_badge||'')}" placeholder="🏆 Trusted by 10,000+ Students"></div>
+                <div class="settings-field"><label>Main Title (HTML allowed)</label><input type="text" id="s_hero_title" value="${Utils.escapeHtml(s.hero_title||'')}" placeholder='Premium <span class="highlight">Medical</span> & PhD Notes'></div>
+                <div class="settings-field"><label>Description</label><textarea id="s_hero_description" rows="3" placeholder="Describe what you offer...">${Utils.escapeHtml(s.hero_description||'')}</textarea></div>
+            </div>
+            <div class="settings-card-footer"><button class="btn btn-primary btn-sm" onclick="saveSettingsSection('hero')">💾 Save Hero Section</button></div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-icon">📊</span><div><h3>Statistics Counters</h3><p>Numbers displayed in the hero section</p></div></div>
+            <div class="settings-card-body">
+                <div class="settings-grid-2">
+                    <div class="settings-field"><label>Stat 1 Value</label><input type="text" id="s_stat_1_value" value="${Utils.escapeHtml(s.stat_1_value||'')}"></div>
+                    <div class="settings-field"><label>Stat 1 Label</label><input type="text" id="s_stat_1_label" value="${Utils.escapeHtml(s.stat_1_label||'')}"></div>
+                    <div class="settings-field"><label>Stat 2 Value</label><input type="text" id="s_stat_2_value" value="${Utils.escapeHtml(s.stat_2_value||'')}"></div>
+                    <div class="settings-field"><label>Stat 2 Label</label><input type="text" id="s_stat_2_label" value="${Utils.escapeHtml(s.stat_2_label||'')}"></div>
+                    <div class="settings-field"><label>Stat 3 Value</label><input type="text" id="s_stat_3_value" value="${Utils.escapeHtml(s.stat_3_value||'')}"></div>
+                    <div class="settings-field"><label>Stat 3 Label</label><input type="text" id="s_stat_3_label" value="${Utils.escapeHtml(s.stat_3_label||'')}"></div>
+                    <div class="settings-field"><label>Stat 4 Value</label><input type="text" id="s_stat_4_value" value="${Utils.escapeHtml(s.stat_4_value||'')}"></div>
+                    <div class="settings-field"><label>Stat 4 Label</label><input type="text" id="s_stat_4_label" value="${Utils.escapeHtml(s.stat_4_label||'')}"></div>
+                </div>
+            </div>
+            <div class="settings-card-footer"><button class="btn btn-primary btn-sm" onclick="saveSettingsSection('stats')">💾 Save Statistics</button></div>
+        </div>
+
+        <!-- Courses Section -->
+        <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-icon">📚</span><div><h3>Courses Section</h3><p>Heading and subtitle for the courses area</p></div></div>
+            <div class="settings-card-body">
+                <div class="settings-field"><label>Section Title</label><input type="text" id="s_courses_title" value="${Utils.escapeHtml(s.courses_title||'')}"></div>
+                <div class="settings-field"><label>Section Subtitle</label><input type="text" id="s_courses_subtitle" value="${Utils.escapeHtml(s.courses_subtitle||'')}"></div>
+            </div>
+            <div class="settings-card-footer"><button class="btn btn-primary btn-sm" onclick="saveSettingsSection('courses_section')">💾 Save Courses Section</button></div>
+        </div>
+
+        <!-- Contact & Social -->
+        <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-icon">📞</span><div><h3>Contact & Social</h3><p>WhatsApp, email, and footer information</p></div></div>
+            <div class="settings-card-body">
+                <div class="settings-grid-2">
+                    <div class="settings-field"><label>WhatsApp Number (with country code, no +)</label><input type="text" id="s_whatsapp_number" value="${Utils.escapeHtml(s.whatsapp_number||'')}" placeholder="919876543210"></div>
+                    <div class="settings-field"><label>Contact Email</label><input type="email" id="s_contact_email" value="${Utils.escapeHtml(s.contact_email||'')}"></div>
+                </div>
+                <div class="settings-field"><label>Footer Description</label><textarea id="s_footer_description" rows="2">${Utils.escapeHtml(s.footer_description||'')}</textarea></div>
+            </div>
+            <div class="settings-card-footer"><button class="btn btn-primary btn-sm" onclick="saveSettingsSection('contact')">💾 Save Contact Settings</button></div>
+        </div>
+
+        <!-- System Info -->
+        <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-icon">🔌</span><div><h3>System Information</h3><p>Database connection and platform stats</p></div></div>
+            <div class="settings-card-body">
+                <div class="settings-info-row"><span>Database</span><span style="color:var(--success);">✅ Connected</span></div>
+                <div class="settings-info-row"><span>Admin</span><span>${Utils.escapeHtml(APP.currentUser.email)}</span></div>
+                <div class="settings-info-row"><span>Courses</span><span>${APP.courses.length} (${APP.courses.filter(c=>c.is_published).length} live)</span></div>
+                <div class="settings-info-row"><span>Users</span><span>${APP.users.length}</span></div>
+                <div class="settings-info-row"><span>Orders</span><span>${APP.orders.length}</span></div>
+            </div>
+            <div class="settings-card-footer">
+                <button class="btn btn-ghost btn-sm" onclick="refreshAdminData()">🔄 Refresh Data</button>
+                <button class="btn btn-ghost btn-sm" onclick="exportData()">📥 Export JSON</button>
+                <button class="btn btn-ghost btn-sm" onclick="exportCSV()">📄 Export CSV</button>
+            </div>
+        </div>`;
+    }
+
+    function saveSettingsSection(section) {
+        const obj={};
+        if(section==='payment'){ obj.upi_id=document.getElementById('s_upi_id').value.trim(); }
+        else if(section==='hero'){ obj.hero_badge=document.getElementById('s_hero_badge').value.trim(); obj.hero_title=document.getElementById('s_hero_title').value.trim(); obj.hero_description=document.getElementById('s_hero_description').value.trim(); }
+        else if(section==='stats'){ obj.stat_1_value=document.getElementById('s_stat_1_value').value.trim(); obj.stat_1_label=document.getElementById('s_stat_1_label').value.trim(); obj.stat_2_value=document.getElementById('s_stat_2_value').value.trim(); obj.stat_2_label=document.getElementById('s_stat_2_label').value.trim(); obj.stat_3_value=document.getElementById('s_stat_3_value').value.trim(); obj.stat_3_label=document.getElementById('s_stat_3_label').value.trim(); obj.stat_4_value=document.getElementById('s_stat_4_value').value.trim(); obj.stat_4_label=document.getElementById('s_stat_4_label').value.trim(); }
+        else if(section==='courses_section'){ obj.courses_title=document.getElementById('s_courses_title').value.trim(); obj.courses_subtitle=document.getElementById('s_courses_subtitle').value.trim(); }
+        else if(section==='contact'){ obj.whatsapp_number=document.getElementById('s_whatsapp_number').value.trim(); obj.contact_email=document.getElementById('s_contact_email').value.trim(); obj.footer_description=document.getElementById('s_footer_description').value.trim(); }
+        saveMultipleSettings(obj);
     }
     function exportData() { const data={courses:APP.courses,users:APP.users.map(u=>({name:(u.first_name||'')+' '+(u.last_name||''),email:u.email,role:u.role,joined:u.created_at})),orders:APP.orders.map(o=>({id:o.order_number||o.id,customer:o.profiles?.full_name,course:o.courses?.title,amount:o.total_amount||o.amount,status:o.status,date:o.created_at})),enrollments:APP.enrollments.map(e=>({student:e.profiles?.full_name,course:e.courses?.title,status:e.status,date:e.enrolled_at}))}; const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='healthiq-export-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); showToast('Data exported!'); }
     function exportCSV() { if(!APP.orders.length){showToast('No orders to export','warning');return;} const headers='Order ID,Customer,Email,Course,Amount,Status,Date\n'; const rows=APP.orders.map(o=>[o.order_number||o.id,o.profiles?.full_name||'',o.profiles?.email||'',o.courses?.title||'',o.total_amount||o.amount||0,o.status||'',o.created_at||''].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n'); const blob=new Blob([headers+rows],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='healthiq-orders-'+new Date().toISOString().slice(0,10)+'.csv'; a.click(); showToast('CSV exported!'); }
@@ -756,7 +914,7 @@
 
     function showPaymentModal(courseId, title, price) {
         let m=document.getElementById('paymentModal'); if(!m){m=document.createElement('div');m.id='paymentModal';m.className='modal-overlay';document.body.appendChild(m);}
-        const upiId='thehealthiqinfo@oksbi';
+        const upiId=APP.settings.upi_id||'thehealthiqinfo@oksbi';
         const upiUrl='upi://pay?pa='+encodeURIComponent(upiId)+'&pn=HealthIQ&am='+price+'&cu=INR&tn='+encodeURIComponent(title);
         const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(upiUrl);
         m.innerHTML=`<div class="modal" style="max-width:420px;text-align:center;">
@@ -847,7 +1005,7 @@
     document.querySelectorAll('.counter').forEach(c=>cObs.observe(c));
 
     // ===== INIT =====
-    async function appInit() { try{await fetchCourses();await initAuth();if(APP.currentUser){await fetchMyEnrollments();await fetchMyOrders();renderCourses();}}catch(e){console.error(e);} }
+    async function appInit() { try{await fetchSettings();await fetchCourses();await initAuth();if(APP.currentUser){await fetchMyEnrollments();await fetchMyOrders();renderCourses();}}catch(e){console.error(e);} }
     async function fetchMyOrders() { if(!APP.currentUser)return; try{const{data,error}=await db.from('orders').select('id,course_id,user_id,status').eq('user_id',APP.currentUser.id); console.log('fetchMyOrders:',{data,error}); if(!error)APP.orders=data||[];}catch(e){console.error('fetchMyOrders error:',e);} }
     </script>
 </body>
