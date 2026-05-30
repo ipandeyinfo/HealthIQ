@@ -240,20 +240,21 @@
         .user-menu-item.danger { color: var(--danger); }
 
         .admin-panel { display: none; position: fixed; inset: 0; background: var(--gray-50); z-index: 3000; overflow-y: auto; }
-        .admin-panel.active { display: block; }
-        .admin-header { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+        .admin-panel.active { display: block; animation: adminSlideIn 0.4s ease; }
+        @keyframes adminSlideIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+        .admin-header { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 4px rgba(0,0,0,0.04); backdrop-filter: blur(12px); }
         .admin-header h2 { font-size: 1.2rem; font-weight: 700; color: var(--gray-900); display: flex; align-items: center; gap: 0.5rem; }
         .admin-header-actions { display: flex; align-items: center; gap: 0.75rem; }
         .admin-header-user { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--gray-600); padding: 0.4rem 0.8rem; background: var(--gray-50); border-radius: 8px; }
         .admin-header-user .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
         @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
         .admin-layout { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 62px); }
-        .admin-sidebar { background: var(--white); border-right: 1px solid var(--gray-200); padding: 1.5rem 0; display: flex; flex-direction: column; }
+        .admin-sidebar { background: linear-gradient(180deg, var(--white) 0%, var(--gray-50) 100%); border-right: 1px solid var(--gray-200); padding: 1.5rem 0; display: flex; flex-direction: column; }
         .admin-sidebar-section { padding: 0 1.25rem; margin-bottom: 0.5rem; }
         .admin-sidebar-label { font-size: 0.65rem; font-weight: 700; color: var(--gray-300); text-transform: uppercase; letter-spacing: 1px; padding: 0.75rem 1.5rem 0.4rem; }
-        .admin-sidebar-item { padding: 0.7rem 1.5rem; cursor: pointer; font-size: 0.88rem; font-weight: 500; color: var(--gray-600); display: flex; align-items: center; gap: 0.75rem; transition: var(--transition); border-left: 3px solid transparent; border-right: none; border-top: none; border-bottom: none; background: none; width: 100%; text-align: left; border-radius: 0; margin: 1px 0; }
-        .admin-sidebar-item:hover { background: var(--gray-50); color: var(--gray-900); }
-        .admin-sidebar-item.active { color: var(--primary); background: var(--primary-light); border-left-color: var(--primary); font-weight: 600; }
+        .admin-sidebar-item { padding: 0.7rem 1.5rem; cursor: pointer; font-size: 0.88rem; font-weight: 500; color: var(--gray-600); display: flex; align-items: center; gap: 0.75rem; transition: all 0.25s cubic-bezier(0.4,0,0.2,1); border-left: 3px solid transparent; border-right: none; border-top: none; border-bottom: none; background: none; width: 100%; text-align: left; border-radius: 0; margin: 1px 0; }
+        .admin-sidebar-item:hover { background: var(--gray-50); color: var(--gray-900); transform: translateX(2px); }
+        .admin-sidebar-item.active { color: var(--primary); background: linear-gradient(90deg, var(--primary-light), transparent); border-left-color: var(--primary); font-weight: 600; }
         .admin-sidebar-item .badge-count { margin-left: auto; background: var(--primary-light); color: var(--primary); padding: 0.1rem 0.5rem; border-radius: 10px; font-size: 0.7rem; font-weight: 700; }
         .admin-sidebar-footer { margin-top: auto; padding: 1rem 1.5rem; border-top: 1px solid var(--gray-200); font-size: 0.75rem; color: var(--gray-300); }
         .admin-content { padding: 2rem; overflow-y: auto; max-height: calc(100vh - 62px); }
@@ -265,8 +266,8 @@
         .admin-welcome .quick-actions .btn { background: rgba(255,255,255,0.15); color: #fff; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2); }
         .admin-welcome .quick-actions .btn:hover { background: rgba(255,255,255,0.25); }
         .admin-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .admin-stat-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 1.25rem 1.5rem; transition: var(--transition); position: relative; overflow: hidden; }
-        .admin-stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .admin-stat-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 1.25rem 1.5rem; transition: all 0.35s cubic-bezier(0.4,0,0.2,1); position: relative; overflow: hidden; }
+        .admin-stat-card:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
         .admin-stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; border-radius: 4px 0 0 4px; }
         .admin-stat-card:nth-child(1)::before { background: var(--primary); }
         .admin-stat-card:nth-child(2)::before { background: var(--success); }
@@ -502,16 +503,21 @@
         <div class="admin-layout">
             <div class="admin-sidebar">
                 <div class="admin-sidebar-label">Main</div>
-                <button class="admin-sidebar-item" onclick="switchAdminTab('dashboard',this)">&#x1F4CA; Dashboard</button>
-                <button class="admin-sidebar-item active" onclick="switchAdminTab('courses',this)">&#x1F4DA; Courses <span class="badge-count" id="sidebarCourseCount">0</span></button>
+                <button class="admin-sidebar-item active" onclick="switchAdminTab('dashboard',this)">&#x1F4CA; Dashboard</button>
+                <button class="admin-sidebar-item" onclick="switchAdminTab('analytics',this)">&#x1F4C8; Analytics</button>
                 <div class="admin-sidebar-label">Management</div>
+                <button class="admin-sidebar-item" onclick="switchAdminTab('courses',this)">&#x1F4DA; Courses <span class="badge-count" id="sidebarCourseCount">0</span></button>
                 <button class="admin-sidebar-item" onclick="switchAdminTab('users',this)">&#x1F465; Users <span class="badge-count" id="sidebarUserCount">0</span></button>
                 <button class="admin-sidebar-item" onclick="switchAdminTab('orders',this)">&#x1F9FE; Orders <span class="badge-count" id="sidebarOrderCount">0</span></button>
                 <button class="admin-sidebar-item" onclick="switchAdminTab('enrollments',this)">&#x1F393; Enrollments</button>
                 <button class="admin-sidebar-item" onclick="switchAdminTab('pricing',this)">&#x1F4B0; Pricing Plans</button>
+                <div class="admin-sidebar-label">Tools</div>
+                <button class="admin-sidebar-item" onclick="switchAdminTab('notifications',this)">&#x1F514; Notifications <span class="badge-count" id="sidebarNotifCount" style="background:var(--danger);color:#fff;">0</span></button>
+                <button class="admin-sidebar-item" onclick="switchAdminTab('activity',this)">&#x1F4DD; Activity Log</button>
+                <button class="admin-sidebar-item" onclick="switchAdminTab('bulk',this)">&#x26A1; Bulk Actions</button>
                 <div class="admin-sidebar-label">System</div>
                 <button class="admin-sidebar-item" onclick="switchAdminTab('settings',this)">&#x2699;&#xFE0F; Settings</button>
-                <div class="admin-sidebar-footer">HealthIQ Admin v2.0<br>Last sync: <span id="lastSyncTime">just now</span></div>
+                <div class="admin-sidebar-footer">HealthIQ Admin v3.0<br>Last sync: <span id="lastSyncTime">just now</span></div>
             </div>
             <div class="admin-content" id="adminContent"></div>
         </div>
@@ -817,10 +823,10 @@
     }
 
     // ===== ADMIN =====
-    async function openAdminPanel() { if(!APP.currentUser||APP.currentUser.role!=='admin'){showToast('Access denied','error');return;} document.getElementById('adminPanel').classList.add('active'); document.getElementById('userMenu').classList.remove('active'); document.getElementById('adminUserLabel').textContent=APP.currentUser.name; renderAdminCourses(); try{ await Promise.all([fetchCourses(),fetchUsers(),fetchOrders(),fetchSettings()]); updateSidebarCounts(); renderAdminCourses(); }catch(e){ console.error('Admin fetch error:',e); } }
+    async function openAdminPanel() { if(!APP.currentUser||APP.currentUser.role!=='admin'){showToast('Access denied','error');return;} document.getElementById('adminPanel').classList.add('active'); document.getElementById('userMenu').classList.remove('active'); document.getElementById('adminUserLabel').textContent=APP.currentUser.name; renderAdminDashboard(); try{ await Promise.all([fetchCourses(),fetchUsers(),fetchOrders(),fetchSettings()]); updateSidebarCounts(); renderAdminDashboard(); }catch(e){ console.error('Admin fetch error:',e); } }
     function closeAdminPanel() { document.getElementById('adminPanel').classList.remove('active'); }
-    function updateSidebarCounts() { const cc=document.getElementById('sidebarCourseCount'),uc=document.getElementById('sidebarUserCount'),oc=document.getElementById('sidebarOrderCount'); if(cc)cc.textContent=APP.courses.length; if(uc)uc.textContent=APP.users.length; if(oc)oc.textContent=APP.orders.length; document.getElementById('lastSyncTime').textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
-    function switchAdminTab(tab,el) { document.querySelectorAll('.admin-sidebar-item').forEach(i=>i.classList.remove('active')); if(el)el.classList.add('active'); ({dashboard:renderAdminDashboard,courses:renderAdminCourses,users:renderAdminUsers,orders:renderAdminOrders,enrollments:renderAdminEnrollments,pricing:renderAdminPricing,settings:renderAdminSettings})[tab]?.(); }
+    function updateSidebarCounts() { const cc=document.getElementById('sidebarCourseCount'),uc=document.getElementById('sidebarUserCount'),oc=document.getElementById('sidebarOrderCount'),nc=document.getElementById('sidebarNotifCount'); if(cc)cc.textContent=APP.courses.length; if(uc)uc.textContent=APP.users.length; if(oc)oc.textContent=APP.orders.length; const pending=APP.orders.filter(o=>o.status==='pending').length; if(nc){nc.textContent=pending;nc.style.display=pending?'inline':'none';} document.getElementById('lastSyncTime').textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
+    function switchAdminTab(tab,el) { document.querySelectorAll('.admin-sidebar-item').forEach(i=>i.classList.remove('active')); if(el)el.classList.add('active'); ({dashboard:renderAdminDashboard,analytics:renderAdminAnalytics,courses:renderAdminCourses,users:renderAdminUsers,orders:renderAdminOrders,enrollments:renderAdminEnrollments,pricing:renderAdminPricing,notifications:renderAdminNotifications,activity:renderAdminActivityLog,bulk:renderAdminBulkActions,settings:renderAdminSettings})[tab]?.(); }
 
     // Confirm dialog helper
     function adminConfirm(msg,onYes) { const o=document.createElement('div'); o.className='modal-overlay active'; o.style.zIndex='5000'; o.innerHTML='<div class="modal" style="max-width:380px;text-align:center;"><h2 style="font-size:1.2rem;margin-bottom:0.5rem;">Confirm Action</h2><p style="color:var(--gray-600);font-size:0.9rem;margin-bottom:1.5rem;">'+msg+'</p><div style="display:flex;gap:0.75rem;"><button class="btn btn-outline" style="flex:1;justify-content:center;" id="acCancel">Cancel</button><button class="btn btn-danger" style="flex:1;justify-content:center;" id="acConfirm">Confirm</button></div></div>'; document.body.appendChild(o); o.querySelector('#acCancel').onclick=()=>o.remove(); o.querySelector('#acConfirm').onclick=()=>{o.remove();onYes();}; o.addEventListener('click',e=>{if(e.target===o)o.remove();}); }
@@ -831,20 +837,204 @@
         const recentOrders=APP.orders.slice(0,5);
         const recentUsers=APP.users.slice(0,5);
         const avgPrice=APP.courses.length?(APP.courses.reduce((a,c)=>a+(c.price||0),0)/APP.courses.length).toFixed(0):0;
+        const pendingCount=APP.orders.filter(o=>o.status==='pending').length;
+        const todayOrders=APP.orders.filter(o=>new Date(o.created_at).toDateString()===new Date().toDateString()).length;
+        const conversionRate=APP.users.length?((APP.enrollments.length/APP.users.length)*100).toFixed(1):0;
         document.getElementById('adminContent').innerHTML=`
-        <div class="admin-welcome"><h2>Welcome back, ${Utils.escapeHtml(APP.currentUser.name)} &#x1F44B;</h2><p>Here's what's happening with HealthIQ today.</p><div class="quick-actions"><button class="btn btn-sm" onclick="openAddCourse()">+ New Course</button><button class="btn btn-sm" onclick="switchAdminTab('orders',document.querySelectorAll('.admin-sidebar-item')[3])">View Orders</button><button class="btn btn-sm" onclick="refreshAdminData()">&#x1F504; Refresh</button><button class="btn btn-sm" onclick="exportData()">&#x1F4E5; Export</button></div></div>
+        <div class="admin-welcome" style="background:linear-gradient(135deg,#0f6fec 0%,#3b82f6 40%,#064299 100%);">
+            <div style="position:absolute;top:-30%;right:-10%;width:250px;height:250px;background:rgba(255,255,255,0.05);border-radius:50%;"></div>
+            <div style="position:absolute;bottom:-20%;left:30%;width:180px;height:180px;background:rgba(255,255,255,0.03);border-radius:50%;"></div>
+            <h2 style="font-size:1.5rem;">Welcome back, ${Utils.escapeHtml(APP.currentUser.name)} &#x1F44B;</h2>
+            <p style="opacity:0.85;margin-bottom:0.5rem;">Here's your business overview for today, ${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}.</p>
+            ${pendingCount?'<div style="margin-top:0.75rem;padding:0.5rem 1rem;background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.3);border-radius:8px;font-size:0.85rem;"><strong>⚠️ ${pendingCount} pending order${pendingCount>1?'s':''}</strong> awaiting your approval</div>':''}
+            <div class="quick-actions" style="margin-top:1rem;">
+                <button class="btn btn-sm" onclick="openAddCourse()">+ New Course</button>
+                <button class="btn btn-sm" onclick="switchAdminTab('orders',document.querySelectorAll('.admin-sidebar-item')[4])">📋 View Orders</button>
+                <button class="btn btn-sm" onclick="refreshAdminData()">🔄 Refresh</button>
+                <button class="btn btn-sm" onclick="exportData()">📥 Export</button>
+            </div>
+        </div>
         <div class="admin-stats">
-            <div class="admin-stat-card"><div class="stat-icon">&#x1F4DA;</div><div class="stat-label">Total Courses</div><div class="stat-value">${APP.courses.length}</div><div class="stat-change">&#x2197; ${published} published, ${drafts} draft</div></div>
-            <div class="admin-stat-card"><div class="stat-icon">&#x1F465;</div><div class="stat-label">Total Users</div><div class="stat-value">${APP.users.length}</div><div class="stat-change">&#x2197; ${APP.enrollments.length} enrollments</div></div>
-            <div class="admin-stat-card"><div class="stat-icon">&#x1F4B0;</div><div class="stat-label">Revenue</div><div class="stat-value">${Utils.formatCurrency(rev)}</div><div class="stat-change">&#x2197; Avg. ${Utils.formatCurrency(avgPrice)}/course</div></div>
-            <div class="admin-stat-card"><div class="stat-icon">&#x1F9FE;</div><div class="stat-label">Orders</div><div class="stat-value">${APP.orders.length}</div><div class="stat-change">${APP.orders.filter(o=>o.status==='pending').length} pending</div></div>
+            <div class="admin-stat-card"><div class="stat-icon">&#x1F4DA;</div><div class="stat-label">Total Courses</div><div class="stat-value">${APP.courses.length}</div><div class="stat-change">&#x2197; ${published} live, ${drafts} draft</div></div>
+            <div class="admin-stat-card"><div class="stat-icon">&#x1F465;</div><div class="stat-label">Total Users</div><div class="stat-value">${APP.users.length}</div><div class="stat-change">&#x2197; ${conversionRate}% conversion</div></div>
+            <div class="admin-stat-card"><div class="stat-icon">&#x1F4B0;</div><div class="stat-label">Total Revenue</div><div class="stat-value">${Utils.formatCurrency(rev)}</div><div class="stat-change">&#x2197; Avg. ${Utils.formatCurrency(avgPrice)}/course</div></div>
+            <div class="admin-stat-card"><div class="stat-icon">&#x1F9FE;</div><div class="stat-label">Orders Today</div><div class="stat-value">${todayOrders}</div><div class="stat-change">${pendingCount} pending approval</div></div>
+        </div>
+        <!-- Quick Metrics Bar -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;">
+            <div style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-radius:var(--radius);padding:1.25rem;text-align:center;"><div style="font-size:1.5rem;font-weight:800;color:#166534;">${APP.enrollments.length}</div><div style="font-size:0.78rem;color:#166534;opacity:0.8;">Active Enrollments</div></div>
+            <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:var(--radius);padding:1.25rem;text-align:center;"><div style="font-size:1.5rem;font-weight:800;color:#92400e;">${pendingCount}</div><div style="font-size:0.78rem;color:#92400e;opacity:0.8;">Pending Approvals</div></div>
+            <div style="background:linear-gradient(135deg,#ede9fe,#ddd6fe);border-radius:var(--radius);padding:1.25rem;text-align:center;"><div style="font-size:1.5rem;font-weight:800;color:#5b21b6;">${APP.orders.filter(o=>o.status==='completed').length}</div><div style="font-size:0.78rem;color:#5b21b6;opacity:0.8;">Completed Sales</div></div>
+        </div>
+        <!-- Revenue Chart Placeholder -->
+        <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:2rem;">
+            <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--gray-900);">📈 Revenue Overview</h3>
+            <div style="display:flex;align-items:end;gap:6px;height:120px;padding:0.5rem 0;">
+                ${(() => { const last7=Array.from({length:7},(_,d)=>{const date=new Date();date.setDate(date.getDate()-6+d);return APP.orders.filter(o=>o.status==='completed'&&new Date(o.created_at).toDateString()===date.toDateString()).reduce((a,o)=>a+(o.total_amount||o.amount||0),0);}); const max=Math.max(...last7,1); return last7.map((v,i)=>{const h=Math.max((v/max)*100,4);const day=new Date();day.setDate(day.getDate()-6+i);return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;background:linear-gradient(180deg,var(--primary),#3b82f6);border-radius:4px 4px 0 0;height:'+h+'%;min-height:4px;transition:height 0.5s;" title="'+Utils.formatCurrency(v)+'"></div><span style="font-size:0.6rem;color:var(--gray-600);">'+['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day.getDay()]+'</span></div>';}).join(''); })()}
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:0.75rem;font-size:0.75rem;color:var(--gray-600);"><span>Last 7 days</span><span>Total: ${Utils.formatCurrency(APP.orders.filter(o=>o.status==='completed').reduce((a,o)=>a+(o.total_amount||o.amount||0),0))}</span></div>
         </div>
         <div class="admin-grid-2">
-            <div class="admin-activity"><h3>&#x1F4CB; Recent Orders</h3>${recentOrders.length?recentOrders.map(o=>'<div class="activity-item"><div class="activity-dot '+(o.status==='completed'?'green':'yellow')+'"></div><div><div class="activity-text"><strong>'+Utils.escapeHtml(o.profiles?.full_name||'User')+'</strong> purchased '+Utils.escapeHtml(o.courses?.title||'a course')+' for '+Utils.formatCurrency(o.total_amount||o.amount||0)+'</div><div class="activity-time">'+Utils.formatDate(o.created_at)+'</div></div></div>').join(''):'<p style="font-size:0.85rem;color:var(--gray-300);padding:1rem 0;">No orders yet</p>'}</div>
+            <div class="admin-activity"><h3>&#x1F4CB; Recent Orders</h3>${recentOrders.length?recentOrders.map(o=>'<div class="activity-item"><div class="activity-dot '+(o.status==='completed'?'green':o.status==='pending'?'yellow':'')+'"></div><div><div class="activity-text"><strong>'+Utils.escapeHtml(o.profiles?.full_name||'User')+'</strong> purchased '+Utils.escapeHtml(o.courses?.title||'a course')+' for '+Utils.formatCurrency(o.total_amount||o.amount||0)+'</div><div class="activity-time">'+Utils.formatDate(o.created_at)+' &middot; <span class="status-badge status-'+(o.status==='completed'?'active':o.status==='pending'?'draft':'inactive')+'" style="font-size:0.65rem;">'+o.status+'</span></div></div></div>').join(''):'<p style="font-size:0.85rem;color:var(--gray-300);padding:1rem 0;">No orders yet</p>'}</div>
             <div class="admin-activity"><h3>&#x1F464; Recent Users</h3>${recentUsers.length?recentUsers.map(u=>'<div class="activity-item"><div class="activity-dot blue"></div><div><div class="activity-text"><strong>'+Utils.escapeHtml((u.first_name||'')+' '+(u.last_name||''))+'</strong> joined as '+Utils.escapeHtml(u.role||'student')+'</div><div class="activity-time">'+Utils.formatDate(u.created_at)+'</div></div></div>').join(''):'<p style="font-size:0.85rem;color:var(--gray-300);padding:1rem 0;">No users yet</p>'}</div>
+        </div>
+        <!-- Keyboard Shortcuts Info -->
+        <div style="margin-top:2rem;padding:1rem 1.5rem;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);font-size:0.8rem;color:var(--gray-600);">
+            <strong>⌨️ Keyboard Shortcuts:</strong> <code style="background:var(--gray-100);padding:0.15rem 0.4rem;border-radius:4px;">R</code> Refresh &nbsp; <code style="background:var(--gray-100);padding:0.15rem 0.4rem;border-radius:4px;">N</code> New Course &nbsp; <code style="background:var(--gray-100);padding:0.15rem 0.4rem;border-radius:4px;">Esc</code> Close Panel
         </div>`;
     }
     async function refreshAdminData() { showToast('Refreshing...','warning'); await Promise.all([fetchCourses(),fetchUsers(),fetchOrders()]); updateSidebarCounts(); const active=document.querySelector('.admin-sidebar-item.active'); const tab=active?.textContent?.includes('Dashboard')?'dashboard':active?.textContent?.includes('Courses')?'courses':active?.textContent?.includes('Users')?'users':active?.textContent?.includes('Orders')?'orders':'courses'; switchAdminTab(tab,active); showToast('Data refreshed!'); }
+
+    // ===== ANALYTICS TAB =====
+    function renderAdminAnalytics() {
+        const totalRev=APP.orders.filter(o=>o.status==='completed').reduce((a,o)=>a+(o.total_amount||o.amount||0),0);
+        const catData={}; APP.courses.forEach(c=>{const cat=c.category||'other'; catData[cat]=(catData[cat]||0)+1;});
+        const statusData={completed:APP.orders.filter(o=>o.status==='completed').length,pending:APP.orders.filter(o=>o.status==='pending').length,failed:APP.orders.filter(o=>o.status==='failed').length};
+        const topCourses=APP.courses.map(c=>({...c,enrollCount:APP.enrollments.filter(e=>String(e.course_id)===String(c.id)).length})).sort((a,b)=>b.enrollCount-a.enrollCount).slice(0,5);
+        const monthlyUsers={}; APP.users.forEach(u=>{const m=new Date(u.created_at).toLocaleDateString('en-IN',{month:'short',year:'2-digit'}); monthlyUsers[m]=(monthlyUsers[m]||0)+1;});
+
+        document.getElementById('adminContent').innerHTML=`
+        <div style="margin-bottom:1.5rem;"><h2 style="font-size:1.4rem;font-weight:800;">📈 Analytics & Insights</h2><p style="font-size:0.85rem;color:var(--gray-600);">Deep dive into your business performance metrics.</p></div>
+        <div class="admin-stats" style="margin-bottom:2rem;">
+            <div class="admin-stat-card"><div class="stat-icon">💰</div><div class="stat-label">Avg. Order Value</div><div class="stat-value">${Utils.formatCurrency(APP.orders.filter(o=>o.status==='completed').length?Math.round(totalRev/APP.orders.filter(o=>o.status==='completed').length):0)}</div></div>
+            <div class="admin-stat-card"><div class="stat-icon">📊</div><div class="stat-label">Conversion Rate</div><div class="stat-value">${APP.users.length?((APP.enrollments.length/APP.users.length)*100).toFixed(1):0}%</div></div>
+            <div class="admin-stat-card"><div class="stat-icon">🔄</div><div class="stat-label">Approval Rate</div><div class="stat-value">${APP.orders.length?((statusData.completed/APP.orders.length)*100).toFixed(0):0}%</div></div>
+            <div class="admin-stat-card"><div class="stat-icon">⭐</div><div class="stat-label">Top Category</div><div class="stat-value" style="font-size:1.2rem;">${Object.entries(catData).sort((a,b)=>b[1]-a[1])[0]?.[0]||'N/A'}</div></div>
+        </div>
+        <div class="admin-grid-2" style="margin-bottom:2rem;">
+            <!-- Category Breakdown -->
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.5rem;">
+                <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">📂 Courses by Category</h3>
+                ${Object.entries(catData).map(([cat,count])=>'<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;"><span style="font-size:0.82rem;min-width:90px;color:var(--gray-600);text-transform:capitalize;">'+cat+'</span><div style="flex:1;height:24px;background:var(--gray-100);border-radius:6px;overflow:hidden;"><div style="height:100%;background:linear-gradient(90deg,var(--primary),#3b82f6);border-radius:6px;width:'+(count/APP.courses.length*100)+'%;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;"><span style="font-size:0.65rem;color:#fff;font-weight:700;">'+count+'</span></div></div></div>').join('')}
+            </div>
+            <!-- Order Status -->
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.5rem;">
+                <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">📋 Order Status Breakdown</h3>
+                <div style="display:flex;gap:1rem;margin-bottom:1.5rem;">
+                    <div style="flex:1;text-align:center;padding:1rem;background:#dcfce7;border-radius:var(--radius);"><div style="font-size:1.5rem;font-weight:800;color:#166534;">${statusData.completed}</div><div style="font-size:0.72rem;color:#166534;">Completed</div></div>
+                    <div style="flex:1;text-align:center;padding:1rem;background:#fef3c7;border-radius:var(--radius);"><div style="font-size:1.5rem;font-weight:800;color:#92400e;">${statusData.pending}</div><div style="font-size:0.72rem;color:#92400e;">Pending</div></div>
+                    <div style="flex:1;text-align:center;padding:1rem;background:#fee2e2;border-radius:var(--radius);"><div style="font-size:1.5rem;font-weight:800;color:#991b1b;">${statusData.failed}</div><div style="font-size:0.72rem;color:#991b1b;">Failed</div></div>
+                </div>
+                <h4 style="font-size:0.85rem;font-weight:600;margin-bottom:0.75rem;color:var(--gray-800);">🏆 Top Courses by Enrollment</h4>
+                ${topCourses.map((c,i)=>'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;border-bottom:1px solid var(--gray-100);font-size:0.82rem;"><span style="font-weight:700;color:var(--primary);width:20px;">#'+(i+1)+'</span><span style="flex:1;">'+Utils.escapeHtml(c.title)+'</span><span style="font-weight:600;">'+c.enrollCount+' enrolled</span></div>').join('')}
+            </div>
+        </div>
+        <!-- User Growth -->
+        <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.5rem;">
+            <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;">👥 User Growth (Monthly)</h3>
+            <div style="display:flex;align-items:end;gap:8px;height:100px;">
+                ${Object.entries(monthlyUsers).slice(-8).map(([m,count])=>{const max=Math.max(...Object.values(monthlyUsers),1);return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="font-size:0.6rem;font-weight:700;color:var(--primary);">'+count+'</div><div style="width:100%;background:linear-gradient(180deg,#10b981,#059669);border-radius:4px 4px 0 0;height:'+Math.max((count/max)*80,4)+'px;"></div><span style="font-size:0.6rem;color:var(--gray-600);">'+m+'</span></div>';}).join('')}
+            </div>
+        </div>`;
+    }
+
+    // ===== NOTIFICATIONS TAB =====
+    function renderAdminNotifications() {
+        const pendingOrders=APP.orders.filter(o=>o.status==='pending');
+        const recentUsers=APP.users.filter(u=>{const d=new Date(u.created_at);return(Date.now()-d.getTime())<7*24*60*60*1000;});
+        const notifications=[];
+        pendingOrders.forEach(o=>notifications.push({type:'warning',icon:'💳',title:'Payment pending approval',desc:(o.profiles?.full_name||'User')+' paid for '+(o.courses?.title||'a course')+' ('+Utils.formatCurrency(o.total_amount||o.amount||0)+')',time:o.created_at,action:'<button class="btn btn-success btn-sm" onclick="approveOrder(\''+o.id+'\',\''+o.user_id+'\',\''+o.course_id+'\')">Approve</button> <button class="btn btn-danger btn-sm" onclick="rejectOrder(\''+o.id+'\')">Reject</button>'}));
+        recentUsers.forEach(u=>notifications.push({type:'info',icon:'👤',title:'New user registered',desc:(u.first_name||'')+' '+(u.last_name||'')+' ('+Utils.escapeHtml(u.email||'')+')',time:u.created_at,action:''}));
+        notifications.sort((a,b)=>new Date(b.time)-new Date(a.time));
+        document.getElementById('sidebarNotifCount').textContent=pendingOrders.length;
+
+        document.getElementById('adminContent').innerHTML=`
+        <div style="margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;"><div><h2 style="font-size:1.4rem;font-weight:800;">🔔 Notifications</h2><p style="font-size:0.85rem;color:var(--gray-600);">${notifications.length} notification${notifications.length!==1?'s':''}</p></div>
+        ${pendingOrders.length?'<button class="btn btn-success btn-sm" onclick="approveAllPending()">✅ Approve All Pending ('+pendingOrders.length+')</button>':''}</div>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+            ${notifications.length?notifications.map(n=>'<div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.25rem;display:flex;align-items:flex-start;gap:1rem;border-left:4px solid '+(n.type==='warning'?'var(--warning)':'var(--primary)')+';"><span style="font-size:1.5rem;">'+n.icon+'</span><div style="flex:1;"><strong style="font-size:0.9rem;color:var(--gray-900);">'+n.title+'</strong><p style="font-size:0.82rem;color:var(--gray-600);margin-top:0.2rem;">'+n.desc+'</p><div style="font-size:0.72rem;color:var(--gray-300);margin-top:0.4rem;">'+Utils.formatDate(n.time)+'</div></div><div style="display:flex;gap:0.5rem;">'+n.action+'</div></div>').join(''):'<div class="empty-state"><div class="empty-state-icon">🔔</div><h3>All caught up!</h3><p>No pending notifications.</p></div>'}
+        </div>`;
+    }
+
+    async function approveAllPending() {
+        const pending=APP.orders.filter(o=>o.status==='pending');
+        if(!pending.length)return;
+        adminConfirm('Approve ALL '+pending.length+' pending payments? This will grant course access to all.', async()=>{
+            let success=0;
+            for(const o of pending){
+                try{
+                    await db.from('orders').update({status:'completed',payment_verified:true,paid_at:new Date().toISOString()}).eq('id',o.id);
+                    await db.from('enrollments').insert({user_id:o.user_id,course_id:o.course_id,order_id:o.id,status:'active',progress:0});
+                    success++;
+                }catch(e){console.error(e);}
+            }
+            showToast(success+' orders approved!');
+            await fetchOrders(); updateSidebarCounts(); renderAdminNotifications();
+        });
+    }
+
+    // ===== ACTIVITY LOG TAB =====
+    function renderAdminActivityLog() {
+        const activities=[];
+        APP.orders.forEach(o=>activities.push({icon:o.status==='completed'?'✅':o.status==='pending'?'⏳':'❌',text:(o.profiles?.full_name||'User')+' → '+(o.courses?.title||'course')+' ('+Utils.formatCurrency(o.total_amount||o.amount||0)+') ['+o.status+']',time:o.created_at,type:'order'}));
+        APP.enrollments.forEach(e=>activities.push({icon:'🎓',text:(e.profiles?.full_name||'User')+' enrolled in '+(e.courses?.title||'course'),time:e.enrolled_at,type:'enrollment'}));
+        APP.users.forEach(u=>activities.push({icon:'👤',text:(u.first_name||'')+' '+(u.last_name||'')+' registered',time:u.created_at,type:'user'}));
+        activities.sort((a,b)=>new Date(b.time)-new Date(a.time));
+
+        document.getElementById('adminContent').innerHTML=`
+        <div style="margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;"><div><h2 style="font-size:1.4rem;font-weight:800;">📝 Activity Log</h2><p style="font-size:0.85rem;color:var(--gray-600);">${activities.length} total events across all time</p></div>
+        <div style="display:flex;gap:0.5rem;"><button class="btn btn-ghost btn-sm actlog-filter active" onclick="filterActivityLog('all',this)">All</button><button class="btn btn-ghost btn-sm actlog-filter" onclick="filterActivityLog('order',this)">Orders</button><button class="btn btn-ghost btn-sm actlog-filter" onclick="filterActivityLog('enrollment',this)">Enrollments</button><button class="btn btn-ghost btn-sm actlog-filter" onclick="filterActivityLog('user',this)">Users</button></div></div>
+        <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;" id="activityLogList">
+            ${activities.slice(0,50).map(a=>'<div class="activity-log-row" data-type="'+a.type+'" style="padding:0.9rem 1.5rem;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:1rem;font-size:0.85rem;transition:background 0.2s;"><span style="font-size:1.1rem;">'+a.icon+'</span><span style="flex:1;color:var(--gray-800);">'+a.text+'</span><span style="font-size:0.75rem;color:var(--gray-300);white-space:nowrap;">'+Utils.formatDate(a.time)+'</span></div>').join('')||'<div class="empty-state"><p>No activity yet</p></div>'}
+        </div>`;
+    }
+    function filterActivityLog(type,btn) { document.querySelectorAll('.actlog-filter').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.activity-log-row').forEach(r=>{r.style.display=(type==='all'||r.dataset.type===type)?'flex':'none';}); }
+
+    // ===== BULK ACTIONS TAB =====
+    function renderAdminBulkActions() {
+        document.getElementById('adminContent').innerHTML=`
+        <div style="margin-bottom:1.5rem;"><h2 style="font-size:1.4rem;font-weight:800;">⚡ Bulk Actions</h2><p style="font-size:0.85rem;color:var(--gray-600);">Perform batch operations on your data. Use with caution.</p></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;">
+            <!-- Bulk Publish -->
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.5rem;">
+                <div style="font-size:1.5rem;margin-bottom:0.75rem;">🚀</div>
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.3rem;">Publish All Drafts</h3>
+                <p style="font-size:0.82rem;color:var(--gray-600);margin-bottom:1rem;">Publish all ${APP.courses.filter(c=>!c.is_published).length} draft courses at once.</p>
+                <button class="btn btn-primary btn-sm" onclick="bulkPublishAll()" ${APP.courses.filter(c=>!c.is_published).length?'':'disabled'}>Publish All (${APP.courses.filter(c=>!c.is_published).length})</button>
+            </div>
+            <!-- Bulk Unpublish -->
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.5rem;">
+                <div style="font-size:1.5rem;margin-bottom:0.75rem;">🛑</div>
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.3rem;">Unpublish All</h3>
+                <p style="font-size:0.82rem;color:var(--gray-600);margin-bottom:1rem;">Take all ${APP.courses.filter(c=>c.is_published).length} live courses offline.</p>
+                <button class="btn btn-outline btn-sm" onclick="bulkUnpublishAll()">Unpublish All</button>
+            </div>
+            <!-- Approve All Pending -->
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.5rem;">
+                <div style="font-size:1.5rem;margin-bottom:0.75rem;">✅</div>
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.3rem;">Approve All Orders</h3>
+                <p style="font-size:0.82rem;color:var(--gray-600);margin-bottom:1rem;">Approve all ${APP.orders.filter(o=>o.status==='pending').length} pending payments.</p>
+                <button class="btn btn-success btn-sm" onclick="approveAllPending()" ${APP.orders.filter(o=>o.status==='pending').length?'':'disabled'}>Approve All (${APP.orders.filter(o=>o.status==='pending').length})</button>
+            </div>
+            <!-- Export All Data -->
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.5rem;">
+                <div style="font-size:1.5rem;margin-bottom:0.75rem;">📥</div>
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.3rem;">Export All Data</h3>
+                <p style="font-size:0.82rem;color:var(--gray-600);margin-bottom:1rem;">Download complete backup as JSON & CSV.</p>
+                <div style="display:flex;gap:0.5rem;"><button class="btn btn-ghost btn-sm" onclick="exportData()">JSON</button><button class="btn btn-ghost btn-sm" onclick="exportCSV()">CSV</button></div>
+            </div>
+            <!-- Reset Prices -->
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.5rem;">
+                <div style="font-size:1.5rem;margin-bottom:0.75rem;">💰</div>
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.3rem;">Bulk Price Update</h3>
+                <p style="font-size:0.82rem;color:var(--gray-600);margin-bottom:0.75rem;">Apply discount to all courses.</p>
+                <div style="display:flex;gap:0.5rem;align-items:center;"><input type="number" id="bulkDiscountPercent" placeholder="%" style="width:60px;padding:0.4rem;border:1px solid var(--gray-200);border-radius:6px;font-size:0.85rem;"><button class="btn btn-primary btn-sm" onclick="bulkApplyDiscount()">Apply Discount</button></div>
+            </div>
+            <!-- Send Notification (placeholder) -->
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1.5rem;">
+                <div style="font-size:1.5rem;margin-bottom:0.75rem;">📢</div>
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.3rem;">Announcement</h3>
+                <p style="font-size:0.82rem;color:var(--gray-600);margin-bottom:0.75rem;">Set a site-wide announcement banner.</p>
+                <input type="text" id="announcementText" placeholder="Type announcement..." style="width:100%;padding:0.5rem;border:1px solid var(--gray-200);border-radius:6px;font-size:0.82rem;margin-bottom:0.5rem;">
+                <button class="btn btn-ghost btn-sm" onclick="saveAnnouncement()">Save Announcement</button>
+            </div>
+        </div>`;
+    }
+
+    async function bulkPublishAll() { adminConfirm('Publish ALL draft courses?', async()=>{ try{const ids=APP.courses.filter(c=>!c.is_published).map(c=>c.id); for(const id of ids){await db.from('courses').update({is_published:true,published_at:new Date().toISOString()}).eq('id',id);} showToast(ids.length+' courses published!'); await fetchCourses(); updateSidebarCounts(); renderAdminBulkActions();}catch(e){showToast('Error: '+e.message,'error');} }); }
+    async function bulkUnpublishAll() { adminConfirm('Unpublish ALL live courses? They will become drafts.', async()=>{ try{const ids=APP.courses.filter(c=>c.is_published).map(c=>c.id); for(const id of ids){await db.from('courses').update({is_published:false}).eq('id',id);} showToast(ids.length+' courses unpublished!'); await fetchCourses(); updateSidebarCounts(); renderAdminBulkActions();}catch(e){showToast('Error: '+e.message,'error');} }); }
+    async function bulkApplyDiscount() { const pct=parseFloat(document.getElementById('bulkDiscountPercent').value); if(!pct||pct<=0||pct>=100){showToast('Enter a valid discount % (1-99)','error');return;} adminConfirm('Apply '+pct+'% discount to ALL courses?', async()=>{ try{for(const c of APP.courses){const newPrice=Math.round(c.price*(1-pct/100)); await db.from('courses').update({price:newPrice,original_price:c.price}).eq('id',c.id);} showToast('Discount applied!'); await fetchCourses(); renderAdminBulkActions();}catch(e){showToast('Error: '+e.message,'error');} }); }
+    async function saveAnnouncement() { const text=document.getElementById('announcementText').value.trim(); await saveSetting('announcement',text); showToast(text?'Announcement saved!':'Announcement cleared!'); }
 
     function renderAdminCourses() {
         const rows=APP.courses.length?APP.courses.map(c=>'<tr><td><div style="display:flex;align-items:center;gap:0.75rem;"><span style="font-size:1.3rem;">'+Utils.escapeHtml(c.icon||'\u{1F4DA}')+'</span><div><strong>'+Utils.escapeHtml(c.title)+'</strong><div style="font-size:0.72rem;color:var(--gray-300);">'+Utils.escapeHtml(c.slug||'')+' &middot; '+Utils.escapeHtml(c.difficulty||'beginner')+'</div></div></div></td><td><span class="status-badge status-active">'+Utils.escapeHtml(c.category||'')+'</span></td><td><strong>'+Utils.formatCurrency(c.price)+'</strong>'+(c.original_price?'<span style="text-decoration:line-through;color:var(--gray-300);font-size:0.72rem;margin-left:0.3rem;">'+Utils.formatCurrency(c.original_price)+'</span>':'')+'</td><td><span class="status-badge '+(c.is_published?'status-active':'status-draft')+'">'+(c.is_published?'Live':'Draft')+'</span></td><td style="white-space:nowrap;"><button class="btn btn-ghost btn-sm" onclick="editCourse(\''+c.id+'\')" title="Edit">&#x270F;</button> <button class="btn btn-ghost btn-sm" onclick="duplicateCourse(\''+c.id+'\')" title="Duplicate">&#x1F4CB;</button> <button class="btn btn-ghost btn-sm" onclick="toggleCoursePublish(\''+c.id+'\','+(!c.is_published)+')" title="'+(c.is_published?'Unpublish':'Publish')+'">'+(c.is_published?'&#x1F6D1;':'&#x1F680;')+'</button> <button class="btn btn-danger btn-sm" onclick="deleteCourse(\''+c.id+'\')" title="Delete">&#x1F5D1;</button></td></tr>').join(''):'<tr><td colspan="5"><div class="empty-state"><div class="empty-state-icon">&#x1F4DA;</div><h3>No courses yet</h3><p>Create your first course to get started.</p><button class="btn btn-primary" onclick="openAddCourse()">+ Create Course</button></div></td></tr>';
