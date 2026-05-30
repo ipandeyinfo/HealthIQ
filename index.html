@@ -1255,8 +1255,8 @@
         try {
             let q = db.from('courses').select('*').order('created_at', {ascending:false});
             const { data, error } = await q; if(error) throw error;
-            // Hide soft-deleted courses (slug prefixed with _deleted_) from everywhere
-            APP.courses = (data || []).filter(c => !(c.slug || '').startsWith('_deleted_'));
+            // Hide soft-deleted courses (slug prefixed with 'deleted-') from everywhere
+            APP.courses = (data || []).filter(c => !(c.slug || '').startsWith('deleted-'));
         } catch(e) { console.error(e); APP.courses = []; }
         renderCourses(); renderPricingPlans();
     }
@@ -1283,7 +1283,7 @@
             const {error: ue, data: ud} = await db.from('courses').update({
                 is_published: false,
                 is_featured: false,
-                slug: '_deleted_'+stamp+'_'+String(id).slice(0,8)
+                slug: 'deleted-'+stamp+'-'+String(id).replace(/[^a-z0-9]/gi,'').slice(0,8).toLowerCase()
             }).eq('id', id).select();
             if(ue) throw ue;
             if(!ud || ud.length===0) throw new Error('Update returned 0 rows — RLS may be blocking UPDATE on courses table');
