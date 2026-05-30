@@ -1585,7 +1585,7 @@
     window.addEventListener('scroll', () => { document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
 
     // ===== INIT =====
-    async function appInit() { try{await fetchSettings();await fetchCourses();await initAuth();if(APP.currentUser){await fetchMyEnrollments();await fetchMyOrders();renderCourses();}}catch(e){console.error(e);} }
+    async function appInit() { try{await fetchSettings();await fetchCourses();await initAuth();if(APP.currentUser){await fetchMyEnrollments();await fetchMyOrders();renderCourses();renderPricingPlans();}}catch(e){console.error(e);} }
     async function fetchMyOrders() { if(!APP.currentUser)return; try{const{data,error}=await db.from('orders').select('id,course_id,user_id,status').eq('user_id',APP.currentUser.id); console.log('fetchMyOrders:',{data,error}); if(!error)APP.orders=data||[];}catch(e){console.error('fetchMyOrders error:',e);} }
     </script>
 </body>
