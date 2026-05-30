@@ -11,8 +11,8 @@
     <link rel="preconnect" href="https://ejpwabynzdjfecsrgumh.supabase.co" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Load Supabase SDK early in head with async fallback -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js';s.defer=true;s.onerror=()=>{window.__sdkFailed=true;};document.head.appendChild(s);"></script>
+    <!-- Load Supabase SDK synchronously in head - small file, ensures availability -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js';s.onerror=function(){window.__sdkFailed=true;};document.head.appendChild(s);"></script>
     <style>
         :root {
             --primary: #0f6fec;
@@ -695,29 +695,34 @@
             setItem: (key, val) => { memStore[key]=val; try { localStorage.setItem(key, val); } catch(e) {} try { sessionStorage.setItem(key, val); } catch(e) {} },
             removeItem: (key) => { delete memStore[key]; try { localStorage.removeItem(key); } catch(e) {} try { sessionStorage.removeItem(key); } catch(e) {} }
         };
-        function initDB() {
+        window.__initDB = function initDB() {
             if(db) return;
+            if(!window.supabase) return;
             try {
                 db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {auth:{persistSession:true,storageKey:'healthiq-auth',storage:iframeStorage,autoRefreshToken:true,detectSessionInUrl:true}});
                 const ob=document.getElementById('offlineBanner'); if(ob) ob.classList.remove('active');
                 if(typeof appInit==='function') appInit();
             } catch(e) { console.error('initDB failed:',e); }
+        };
+        // IMPORTANT: defer init to next tick so rest of script (const APP, DEFAULT_SETTINGS, appInit) finishes parsing
+        function tryInit(){
+            if(window.supabase){ window.__initDB(); return true; }
+            return false;
         }
-        // SDK might already be loaded (from head <script>) or still loading
-        let waited=0; const interval=setInterval(()=>{
-            if(window.supabase){clearInterval(interval);initDB();}
-            else if(window.__sdkFailed||waited>15000){
-                clearInterval(interval);
-                // Last resort: try loading from a 3rd CDN
-                const s=document.createElement('script');
-                s.src='https://cdn.skypack.dev/@supabase/supabase-js@2';
-                s.type='module';
-                s.onload=()=>{ if(window.supabase) initDB(); else { const ob=document.getElementById('offlineBanner'); if(ob) ob.classList.add('active'); } };
-                s.onerror=()=>{ const ob=document.getElementById('offlineBanner'); if(ob) ob.classList.add('active'); };
-                document.head.appendChild(s);
-            }
-            waited+=200;
-        },200);
+        // Try after current script execution completes
+        setTimeout(()=>{
+            if(tryInit()) return;
+            // Poll up to 20 seconds
+            let waited=0; const interval=setInterval(()=>{
+                if(tryInit()){clearInterval(interval);}
+                else if(waited>=20000){
+                    clearInterval(interval);
+                    const ob=document.getElementById('offlineBanner'); if(ob) ob.classList.add('active');
+                    console.error('Supabase SDK failed to load after 20s');
+                }
+                waited+=200;
+            },200);
+        },0);
     })();
     function isSupabaseConfigured() { return !!db; }
 
