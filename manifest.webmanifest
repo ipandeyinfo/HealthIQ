@@ -1,0 +1,26 @@
+{
+  "name": "HealthIQ — BHMS & MD Notes",
+  "short_name": "HealthIQ",
+  "description": "Premium BHMS & MD Homoeopathy notes by a Gold Medalist.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f6fec",
+  "theme_color": "#0f6fec",
+  "categories": ["education", "medical", "books"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='112' fill='%230f6fec'/><text x='256' y='340' font-size='280' font-weight='800' font-family='Inter,sans-serif' fill='white' text-anchor='middle'>H</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='42' fill='%230f6fec'/><text x='96' y='128' font-size='104' font-weight='800' font-family='Inter,sans-serif' fill='white' text-anchor='middle'>H</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

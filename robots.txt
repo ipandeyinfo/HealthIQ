@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+
+Sitemap: https://ipandeyinfo.github.io/HealthIQ/sitemap.xml
