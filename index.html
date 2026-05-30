@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Load Supabase SDK synchronously in head - small file, ensures availability -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js';s.onerror=function(){window.__sdkFailed=true;};document.head.appendChild(s);"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onload="window.__sdkReady=true;if(window.__initDB)window.__initDB();" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js';s.onload=function(){window.__sdkReady=true;if(window.__initDB)window.__initDB();};s.onerror=function(){var s2=document.createElement('script');s2.src='https://cdn.skypack.dev/@supabase/supabase-js@2';s2.onload=function(){window.__sdkReady=true;if(window.__initDB)window.__initDB();};s2.onerror=function(){window.__sdkFailed=true;};document.head.appendChild(s2);};document.head.appendChild(s);"></script>
     <style>
         :root {
             --primary: #0f6fec;
@@ -953,10 +953,14 @@
         const email=document.getElementById('loginEmail').value.trim(), pass=document.getElementById('loginPassword').value;
         if(!email||!pass){showToast('Please fill all fields','error');return;}
         const btn=document.getElementById('loginBtn'); btn.classList.add('btn-loading'); btn.disabled=true;
-        // Wait for SDK to load (up to 5 seconds)
+        // Wait for SDK to load (up to 15 seconds), try to init if SDK loaded but db not yet
         if(!isSupabaseConfigured()){
-            for(let i=0;i<10;i++){await new Promise(r=>setTimeout(r,500));if(isSupabaseConfigured())break;}
-            if(!isSupabaseConfigured()){btn.classList.remove('btn-loading');btn.disabled=false;showToast('Connecting to server... please try again','warning');return;}
+            for(let i=0;i<30;i++){
+                if(window.supabase && !db && window.__initDB){window.__initDB();}
+                if(isSupabaseConfigured())break;
+                await new Promise(r=>setTimeout(r,500));
+            }
+            if(!isSupabaseConfigured()){btn.classList.remove('btn-loading');btn.disabled=false;showToast(window.__sdkFailed?'SDK blocked - check ad-blocker / network':'Server still loading, please wait a moment and try again','error');return;}
         }
         try {
             const {data,error}=await db.auth.signInWithPassword({email,password:pass}); if(error)throw error;
