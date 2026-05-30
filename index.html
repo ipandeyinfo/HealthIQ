@@ -324,12 +324,30 @@
             .course-grid, .features-grid, .pricing-grid, .testimonial-grid { grid-template-columns: 1fr; }
             .footer-grid { grid-template-columns: 1fr 1fr; } .section { padding: 3rem 1.5rem; }
             .hero { padding: 6rem 1.5rem 3rem; } .admin-layout { grid-template-columns: 1fr; }
-            .admin-sidebar { display: none; } .admin-grid-2 { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; }
+            .admin-sidebar { display: none; position: fixed; top: 0; left: 0; bottom: 0; width: 280px; z-index: 100; box-shadow: 4px 0 20px rgba(0,0,0,0.15); animation: slideInLeft 0.3s ease; }
+            .admin-sidebar.mobile-open { display: flex; }
+            .admin-sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 99; }
+            .admin-sidebar-overlay.active { display: block; }
+            .admin-mobile-toggle { display: flex !important; }
+            .admin-grid-2 { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; }
+            .admin-header { padding: 0.75rem 1rem; }
+            .admin-header h2 { font-size: 1rem; }
+            .admin-content { padding: 1rem; max-height: calc(100vh - 54px); }
+            .admin-stats { grid-template-columns: 1fr 1fr; }
+            .admin-table { font-size: 0.78rem; }
+            .admin-table th, .admin-table td { padding: 0.6rem 0.75rem; }
         }
-        @media (max-width: 480px) { .hero h1 { font-size: 1.8rem; } .hero-buttons { flex-direction: column; align-items: center; } .footer-grid { grid-template-columns: 1fr; } }
-        .mobile-nav { display: none; position: fixed; top: 58px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 1rem 1.5rem; z-index: 999; flex-direction: column; gap: 0.75rem; box-shadow: var(--shadow-md); }
+        @keyframes slideInLeft { from{transform:translateX(-100%);} to{transform:translateX(0);} }
+        .admin-mobile-toggle { display: none; background: var(--primary-light); border: none; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 1.2rem; align-items: center; justify-content: center; color: var(--primary); }
+        @media (max-width: 480px) { .hero h1 { font-size: 1.8rem; } .hero-buttons { flex-direction: column; align-items: center; } .footer-grid { grid-template-columns: 1fr; } .admin-stats { grid-template-columns: 1fr; } }
+        .hamburger { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-800); transition: var(--transition); }
+        .hamburger.active { transform: rotate(90deg); }
+        .mobile-nav { display: none; position: fixed; top: 58px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 1rem 1.5rem; z-index: 999; flex-direction: column; gap: 0.5rem; box-shadow: var(--shadow-lg); animation: fadeInDown 0.25s ease; }
         .mobile-nav.active { display: flex; }
-        .mobile-nav a { text-decoration: none; color: var(--gray-800); font-weight: 500; padding: 0.6rem 0; }
+        .mobile-nav a { text-decoration: none; color: var(--gray-800); font-weight: 500; padding: 0.7rem 0; border-bottom: 1px solid var(--gray-100); }
+        .mobile-nav a:last-of-type { border-bottom: none; }
+        .mobile-auth { display: flex; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--gray-200); }
+        .mobile-auth .btn { flex: 1; justify-content: center; }
 
         /* Settings Cards */
         .settings-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); margin-bottom: 1.25rem; overflow: hidden; transition: var(--transition); }
@@ -383,7 +401,21 @@
             </div>
         </div>
     </nav>
-    <div class="mobile-nav" id="mobileNav"><a href="javascript:void(0)" onclick="scrollToEl('courses')">Courses</a><a href="javascript:void(0)" onclick="scrollToEl('pricing')">Pricing</a><a href="javascript:void(0)" onclick="scrollToEl('testimonials')">Reviews</a><a href="javascript:void(0)" onclick="scrollToEl('faq')">FAQ</a></div>
+    <div class="mobile-nav" id="mobileNav">
+        <a href="javascript:void(0)" onclick="scrollToEl('courses');toggleMobile()">Courses</a>
+        <a href="javascript:void(0)" onclick="scrollToEl('pricing');toggleMobile()">Pricing</a>
+        <a href="javascript:void(0)" onclick="scrollToEl('testimonials');toggleMobile()">Reviews</a>
+        <a href="javascript:void(0)" onclick="scrollToEl('faq');toggleMobile()">FAQ</a>
+        <div class="mobile-auth" id="mobileAuthButtons">
+            <button class="btn btn-ghost" onclick="openModal('login');toggleMobile()">Login</button>
+            <button class="btn btn-primary" onclick="openModal('register');toggleMobile()">Register</button>
+        </div>
+        <div class="mobile-auth" id="mobileUserButtons" style="display:none;">
+            <button class="btn btn-ghost" onclick="showMyCourses();toggleMobile()">📚 My Courses</button>
+            <button class="btn btn-ghost" onclick="openAdminPanel();toggleMobile()" id="mobileAdminBtn" style="display:none;">📊 Admin</button>
+            <button class="btn btn-danger btn-sm" onclick="logout();toggleMobile()">Logout</button>
+        </div>
+    </div>
 
     <section class="hero">
         <div class="hero-content">
@@ -494,14 +526,18 @@
     <!-- Admin Panel -->
     <div class="admin-panel" id="adminPanel">
         <div class="admin-header">
-            <h2>&#x2699;&#xFE0F; HealthIQ Admin</h2>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+                <button class="admin-mobile-toggle" onclick="toggleAdminSidebar()" aria-label="Menu">☰</button>
+                <h2>&#x2699;&#xFE0F; HealthIQ Admin</h2>
+            </div>
             <div class="admin-header-actions">
                 <div class="admin-header-user"><span class="dot"></span> <span id="adminUserLabel">Admin</span></div>
                 <button class="btn btn-ghost btn-sm" onclick="closeAdminPanel()">&#x2190; Back to Site</button>
             </div>
         </div>
         <div class="admin-layout">
-            <div class="admin-sidebar">
+            <div id="adminSidebarOverlay" class="admin-sidebar-overlay" onclick="toggleAdminSidebar()"></div>
+            <div class="admin-sidebar" id="adminSidebar">
                 <div class="admin-sidebar-label">Main</div>
                 <button class="admin-sidebar-item active" onclick="switchAdminTab('dashboard',this)">&#x1F4CA; Dashboard</button>
                 <button class="admin-sidebar-item" onclick="switchAdminTab('analytics',this)">&#x1F4C8; Analytics</button>
@@ -567,7 +603,8 @@
         localStorage.setItem('theme', isDark ? 'light' : 'dark');
         document.querySelector('.dark-toggle').innerHTML = isDark ? '&#x1F319;' : '&#x1F31D;';
     }
-    function toggleMobile() { document.getElementById('mobileNav').classList.toggle('active'); }
+    function toggleMobile() { document.getElementById('mobileNav').classList.toggle('active'); document.querySelector('.hamburger').classList.toggle('active'); }
+    function toggleAdminSidebar() { const sb=document.getElementById('adminSidebar'); const ov=document.getElementById('adminSidebarOverlay'); sb.classList.toggle('mobile-open'); ov.classList.toggle('active'); }
     function toggleFaq(el) { const item = el.parentElement; item.classList.toggle('active'); el.setAttribute('aria-expanded', item.classList.contains('active')); }
     function toggleUserMenu() { document.getElementById('userMenu').classList.toggle('active'); }
 
@@ -799,8 +836,17 @@
 
     function updateAuthUI() {
         const a=document.getElementById('authButtons'), u=document.getElementById('userMenuWrapper'), m=document.getElementById('adminMenuItem');
-        if(APP.currentUser){a.style.display='none';u.style.display='block';document.getElementById('userAvatarBtn').textContent=APP.currentUser.name.charAt(0).toUpperCase();if(m)m.style.display=APP.currentUser.role==='admin'?'flex':'none';if(APP.currentUser.role==='admin')document.body.classList.add('admin-mode');else document.body.classList.remove('admin-mode');}
-        else{a.style.display='flex';u.style.display='none';document.body.classList.remove('admin-mode');}
+        const ma=document.getElementById('mobileAuthButtons'), mu=document.getElementById('mobileUserButtons'), mb=document.getElementById('mobileAdminBtn');
+        if(APP.currentUser){
+            a.style.display='none';u.style.display='block';document.getElementById('userAvatarBtn').textContent=APP.currentUser.name.charAt(0).toUpperCase();
+            if(m)m.style.display=APP.currentUser.role==='admin'?'flex':'none';
+            if(APP.currentUser.role==='admin')document.body.classList.add('admin-mode');else document.body.classList.remove('admin-mode');
+            if(ma)ma.style.display='none'; if(mu)mu.style.display='flex';
+            if(mb)mb.style.display=APP.currentUser.role==='admin'?'block':'none';
+        } else {
+            a.style.display='flex';u.style.display='none';document.body.classList.remove('admin-mode');
+            if(ma)ma.style.display='flex'; if(mu)mu.style.display='none';
+        }
     }
 
     // ===== RENDER =====
