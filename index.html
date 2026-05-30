@@ -836,7 +836,8 @@
             if(enrolled||approvedOrder) btn='<button class="btn btn-success" style="width:100%;justify-content:center;" onclick="openPlanNotes('+i+')">📄 Open Notes</button>';
             else if(pendingOrder) btn='<button class="btn btn-ghost" style="width:100%;justify-content:center;" disabled>⏳ Awaiting Approval</button>';
             else if(courseId) btn='<button class="btn '+(p.is_popular?'btn-primary':'btn-outline')+'" style="width:100%;justify-content:center;" onclick="buyPlan('+i+',\''+courseId+'\')">'+( p.is_popular?'Buy Now':'Get Started')+'</button>';
-            else btn='<button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="openModal(\'register\')">Get Started</button>';
+            else if(APP.currentUser) btn='<button class="btn btn-ghost" style="width:100%;justify-content:center;" disabled>🔜 Coming Soon</button>';
+            else btn='<button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="openModal(\'login\')">Get Started</button>';
 
             return '<div class="pricing-card'+(p.is_popular?' popular':'')+'">'+
                 (enrolled||approvedOrder?'<div style="position:absolute;top:12px;right:12px;background:var(--success);color:#fff;padding:0.2rem 0.6rem;border-radius:6px;font-size:0.7rem;font-weight:700;">✓ ENROLLED</div>':'')+
