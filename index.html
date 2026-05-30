@@ -98,7 +98,8 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .dark-toggle { background: var(--gray-100); border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
         .dark-toggle:hover { background: var(--gray-200); }
-        .hamburger { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-800); }
+        .hamburger { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-800); transition: var(--transition); }
+        .hamburger.active { transform: rotate(90deg); }
 
         .hero { padding: 9rem 2rem 5rem; background: linear-gradient(160deg, var(--primary-light) 0%, var(--white) 40%, #f0f7ff 100%); text-align: center; position: relative; overflow: hidden; }
         .hero::before { content: ''; position: absolute; top: -40%; right: -15%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(15,111,236,0.06) 0%, transparent 65%); border-radius: 50%; animation: float 8s ease-in-out infinite; }
@@ -340,8 +341,6 @@
         @keyframes slideInLeft { from{transform:translateX(-100%);} to{transform:translateX(0);} }
         .admin-mobile-toggle { display: none; background: var(--primary-light); border: none; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 1.2rem; align-items: center; justify-content: center; color: var(--primary); }
         @media (max-width: 480px) { .hero h1 { font-size: 1.8rem; } .hero-buttons { flex-direction: column; align-items: center; } .footer-grid { grid-template-columns: 1fr; } .admin-stats { grid-template-columns: 1fr; } }
-        .hamburger { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-800); transition: var(--transition); }
-        .hamburger.active { transform: rotate(90deg); }
         .mobile-nav { display: none; position: fixed; top: 58px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 1rem 1.5rem; z-index: 999; flex-direction: column; gap: 0.5rem; box-shadow: var(--shadow-lg); animation: fadeInDown 0.25s ease; }
         .mobile-nav.active { display: flex; }
         .mobile-nav a { text-decoration: none; color: var(--gray-800); font-weight: 500; padding: 0.7rem 0; border-bottom: 1px solid var(--gray-100); }
