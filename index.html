@@ -472,10 +472,10 @@
                 <a href="javascript:void(0)" onclick="scrollToEl('courses')" class="btn btn-outline btn-lg">&#x1F4DA; Explore Courses</a>
             </div>
             <div class="hero-stats">
-                <div class="stat-item"><h3 class="counter" data-target="10000">0</h3><p>Students</p></div>
-                <div class="stat-item"><h3 class="counter" data-target="250">0</h3><p>Notes Available</p></div>
-                <div class="stat-item"><h3 class="counter" data-target="98">0</h3><p>% Satisfaction</p></div>
-                <div class="stat-item"><h3 class="counter" data-target="50">0</h3><p>Expert Authors</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="10000" data-suffix="+">0</h3><p>Students</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="250" data-suffix="+">0</h3><p>Notes Available</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="98" data-suffix="%">0</h3><p>% Satisfaction</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="50" data-suffix="+">0</h3><p>Expert Authors</p></div>
             </div>
         </div>
     </section>
@@ -820,7 +820,10 @@
     async function handleForgotPassword() {
         const email=document.getElementById('loginEmail').value.trim();
         if(!email){showToast('Enter your email first, then click Forgot Password','warning');return;}
-        if(!isSupabaseConfigured()){showToast('Service unavailable','error');return;}
+        if(!isSupabaseConfigured()){
+            for(let i=0;i<10;i++){await new Promise(r=>setTimeout(r,500));if(isSupabaseConfigured())break;}
+            if(!isSupabaseConfigured()){showToast('Connecting to server... please try again','warning');return;}
+        }
         try{
             const{error}=await db.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname});
             if(error)throw error;
@@ -926,8 +929,12 @@
         event.preventDefault();
         const email=document.getElementById('loginEmail').value.trim(), pass=document.getElementById('loginPassword').value;
         if(!email||!pass){showToast('Please fill all fields','error');return;}
-        if(!isSupabaseConfigured()){showToast('Service unavailable','error');return;}
         const btn=document.getElementById('loginBtn'); btn.classList.add('btn-loading'); btn.disabled=true;
+        // Wait for SDK to load (up to 5 seconds)
+        if(!isSupabaseConfigured()){
+            for(let i=0;i<10;i++){await new Promise(r=>setTimeout(r,500));if(isSupabaseConfigured())break;}
+            if(!isSupabaseConfigured()){btn.classList.remove('btn-loading');btn.disabled=false;showToast('Connecting to server... please try again','warning');return;}
+        }
         try {
             const {data,error}=await db.auth.signInWithPassword({email,password:pass}); if(error)throw error;
             const {data:profile}=await db.from('profiles').select('*').eq('id',data.user.id).single();
@@ -947,8 +954,11 @@
         const fn=document.getElementById('regFirstName').value.trim(), ln=document.getElementById('regLastName').value.trim(), un=document.getElementById('regUsername').value.trim(), em=document.getElementById('regEmail').value.trim(), pw=document.getElementById('regPassword').value;
         if(!fn||!ln||!un||!em||!pw){showToast('Fill all fields','error');return;}
         if(pw.length<6){showToast('Password min 6 chars','error');return;}
-        if(!isSupabaseConfigured()){showToast('Service unavailable','error');return;}
         const btn=document.getElementById('registerBtn'); btn.classList.add('btn-loading'); btn.disabled=true;
+        if(!isSupabaseConfigured()){
+            for(let i=0;i<10;i++){await new Promise(r=>setTimeout(r,500));if(isSupabaseConfigured())break;}
+            if(!isSupabaseConfigured()){btn.classList.remove('btn-loading');btn.disabled=false;showToast('Connecting to server... please try again','warning');return;}
+        }
         try {
             const {data,error}=await db.auth.signUp({email:em,password:pw,options:{data:{full_name:fn+' '+ln,first_name:fn,last_name:ln,username:un}}}); if(error)throw error;
             if(data.user&&data.session){await new Promise(r=>setTimeout(r,800)); const{data:p}=await db.from('profiles').select('*').eq('id',data.user.id).single(); APP.userProfile=p; APP.currentUser={id:data.user.id,name:fn+' '+ln,email:em,role:'student'}; closeModal('register'); updateAuthUI(); renderCourses(); showToast('Account created! Welcome!');}
@@ -1615,7 +1625,23 @@
     window.addEventListener('scroll', () => { document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
 
     // ===== INIT =====
-    async function appInit() { try{await fetchSettings();await fetchCourses();await initAuth();if(APP.currentUser){await fetchMyEnrollments();await fetchMyOrders();renderCourses();renderPricingPlans();}}catch(e){console.error(e);} }
+    async function appInit() {
+        // Always apply defaults first so page looks good even without network
+        for(const k in DEFAULT_SETTINGS){ if(!APP.settings[k]) APP.settings[k]=DEFAULT_SETTINGS[k]; }
+        applySettings(); renderCourses(); renderPricingPlans();
+        // Then try to fetch from Supabase
+        try { await fetchSettings(); } catch(e){ console.warn('fetchSettings failed:',e); }
+        try { await fetchCourses(); } catch(e){ console.warn('fetchCourses failed:',e); }
+        try { await initAuth(); } catch(e){ console.warn('initAuth failed:',e); }
+        if(APP.currentUser){
+            try { await fetchMyEnrollments(); } catch(e){}
+            try { await fetchMyOrders(); } catch(e){}
+        }
+        // Always re-render everything after all data loaded
+        renderCourses(); renderPricingPlans(); renderTestimonials(); renderFAQs();
+        // Re-animate stats in case they were scrolled past during load
+        document.querySelectorAll('.counter').forEach(c=>{ animateCounter(c); });
+    }
     async function fetchMyOrders() { if(!APP.currentUser)return; try{const{data,error}=await db.from('orders').select('id,course_id,user_id,status').eq('user_id',APP.currentUser.id); console.log('fetchMyOrders:',{data,error}); if(!error)APP.orders=data||[];}catch(e){console.error('fetchMyOrders error:',e);} }
     </script>
 </body>
