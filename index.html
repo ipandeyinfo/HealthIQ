@@ -46,7 +46,7 @@
         [data-theme="dark"] .hero { background: linear-gradient(160deg, #0a0f1a 0%, #0f1929 40%, #111d2e 100%); }
         [data-theme="dark"] .hero::before { background: radial-gradient(circle, rgba(59,139,255,0.08) 0%, transparent 65%); }
         [data-theme="dark"] .course-card, [data-theme="dark"] .feature-card, [data-theme="dark"] .pricing-card, [data-theme="dark"] .testimonial-card, [data-theme="dark"] .faq-item { background: #111827; border-color: #1e293b; }
-        [data-theme="dark"] .pricing-card.popular { background: linear-gradient(135deg, #0f2847 0%, #111827 100%); border-color: var(--primary); }
+        [data-theme="dark"] .pricing-card.popular { border-color: var(--primary); }
         [data-theme="dark"] .section-alt { background: #0d1320; }
         [data-theme="dark"] .navbar { background: rgba(10,15,26,0.95); border-bottom-color: #1e293b; }
         [data-theme="dark"] .modal { background: #111827; border: 1px solid #1e293b; }
@@ -162,19 +162,21 @@
         .feature-card h3 { font-size: 1.05rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem; }
         .feature-card p { font-size: 0.9rem; color: var(--gray-600); line-height: 1.6; }
 
-        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-        .pricing-card { background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius-xl); padding: 2.5rem; text-align: center; transition: all 0.4s cubic-bezier(0.4,0,0.2,1); position: relative; overflow: hidden; display: flex; flex-direction: column; }
-        .pricing-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(15,111,236,0.02), transparent); pointer-events: none; }
-        .pricing-card.popular { border-color: var(--primary); box-shadow: 0 8px 30px rgba(15,111,236,0.12); background: linear-gradient(180deg, rgba(15,111,236,0.02), var(--white)); }
-        .pricing-card.popular::before { content: 'Most Popular'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--primary), #3b82f6); color: #fff; padding: 0.3rem 1.2rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; box-shadow: 0 4px 12px rgba(15,111,236,0.3); }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; align-items: stretch; }
+        .pricing-card { background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius-xl); padding: 2.5rem 2rem; text-align: center; transition: all 0.4s cubic-bezier(0.4,0,0.2,1); position: relative; display: flex; flex-direction: column; }
+        .pricing-card.popular { border-color: var(--primary); box-shadow: 0 8px 30px rgba(15,111,236,0.12); }
+        .pricing-card.popular .pricing-badge { display: inline-block; }
         .pricing-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(15,111,236,0.15); }
-        .pricing-card h3 { font-size: 1.2rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem; }
-        .pricing-amount { font-size: 2.8rem; font-weight: 900; color: var(--primary); margin: 0.5rem 0; line-height: 1.2; }
-        .pricing-period { font-size: 0.95rem; color: var(--gray-600); font-weight: 400; margin-bottom: 0.25rem; }
-        .pricing-original { text-decoration: line-through; color: var(--gray-300); font-size: 0.9rem; margin-bottom: 0.5rem; }
-        .pricing-features { list-style: none; text-align: left; margin: 1.5rem 0; flex: 1; }
+        .pricing-badge { display: none; background: linear-gradient(135deg, var(--primary), #3b82f6); color: #fff; padding: 0.3rem 1.2rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.75rem; }
+        .pricing-card h3 { font-size: 1.2rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.25rem; }
+        .pricing-price-block { min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0.5rem 0; }
+        .pricing-amount { font-size: 2.8rem; font-weight: 900; color: var(--primary); line-height: 1.2; }
+        .pricing-period { font-size: 0.9rem; color: var(--gray-600); font-weight: 400; margin-top: 0.15rem; }
+        .pricing-original { text-decoration: line-through; color: var(--gray-300); font-size: 0.9rem; margin-top: 0.25rem; }
+        .pricing-features { list-style: none; text-align: left; margin: 1rem 0; flex: 1; }
         .pricing-features li { padding: 0.6rem 0; font-size: 0.9rem; color: var(--gray-600); border-bottom: 1px solid var(--gray-100); }
         .pricing-features li::before { content: '\2713 '; color: var(--success); font-weight: 700; }
+        .pricing-features li:last-child { border-bottom: none; }
 
         .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; }
         .testimonial-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 2rem; transition: all 0.4s cubic-bezier(0.4,0,0.2,1); position: relative; }
@@ -838,10 +840,13 @@
 
             return '<div class="pricing-card'+(p.is_popular?' popular':'')+'">'+
                 (enrolled||approvedOrder?'<div style="position:absolute;top:12px;right:12px;background:var(--success);color:#fff;padding:0.2rem 0.6rem;border-radius:6px;font-size:0.7rem;font-weight:700;">✓ ENROLLED</div>':'')+
+                '<span class="pricing-badge">⭐ Most Popular</span>'+
                 '<h3>'+Utils.escapeHtml(p.title)+'</h3>'+
-                '<div class="pricing-amount">'+Utils.formatCurrency(p.price)+'</div>'+
-                '<div class="pricing-period">'+Utils.escapeHtml(p.period||'')+'</div>'+
-                (p.original_price?'<div class="pricing-original">'+Utils.formatCurrency(p.original_price)+'</div>':'')+
+                '<div class="pricing-price-block">'+
+                    '<div class="pricing-amount">'+Utils.formatCurrency(p.price)+'</div>'+
+                    '<div class="pricing-period">'+(p.period?Utils.escapeHtml(p.period):'&nbsp;')+'</div>'+
+                    '<div class="pricing-original">'+(p.original_price?Utils.formatCurrency(p.original_price):'&nbsp;')+'</div>'+
+                '</div>'+
                 '<ul class="pricing-features">'+p.features.map(f=>'<li>'+Utils.escapeHtml(f)+'</li>').join('')+'</ul>'+
                 btn+'</div>';
         }).join('');
