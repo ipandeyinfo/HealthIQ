@@ -691,12 +691,22 @@
             setItem: (key, val) => { memStore[key]=val; try { localStorage.setItem(key, val); } catch(e) {} try { sessionStorage.setItem(key, val); } catch(e) {} },
             removeItem: (key) => { delete memStore[key]; try { localStorage.removeItem(key); } catch(e) {} try { sessionStorage.removeItem(key); } catch(e) {} }
         };
-        let retries=0; const maxRetries=3;
+        const cdns = [
+            'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js',
+            'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js'
+        ];
+        let retries=0; const maxRetries=cdns.length*2;
+        let cdnIndex=0;
+        function initDB() {
+            db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {auth:{persistSession:true,storageKey:'healthiq-auth',storage:iframeStorage,autoRefreshToken:true,detectSessionInUrl:true}});
+            document.getElementById('offlineBanner').classList.remove('active');
+            if(typeof appInit==='function') appInit();
+        }
         function loadSDK() {
             const s = document.createElement('script');
-            s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-            s.onload = () => { db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {auth:{persistSession:true,storageKey:'healthiq-auth',storage:iframeStorage,autoRefreshToken:true,detectSessionInUrl:true}}); document.getElementById('offlineBanner').classList.remove('active'); if(typeof appInit==='function') appInit(); };
-            s.onerror = () => { retries++; if(retries<maxRetries){setTimeout(loadSDK,2000*retries);}else{document.getElementById('offlineBanner').classList.add('active');showToast('Connection failed after '+maxRetries+' attempts. Please refresh.','error');} };
+            s.src = cdns[cdnIndex % cdns.length];
+            s.onload = initDB;
+            s.onerror = () => { retries++; cdnIndex++; if(retries<maxRetries){setTimeout(loadSDK,1500);}else{document.getElementById('offlineBanner').classList.add('active');showToast('Connection failed. Please refresh.','error');} };
             document.head.appendChild(s);
         }
         loadSDK();
