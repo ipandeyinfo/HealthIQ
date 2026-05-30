@@ -425,8 +425,7 @@
             <div class="nav-actions">
                 <button class="dark-toggle" onclick="toggleDark()" aria-label="Toggle dark mode">&#x1F319;</button>
                 <div id="authButtons">
-                    <button class="btn btn-ghost" onclick="openModal('login')">Login</button>
-                    <button class="btn btn-primary" onclick="openModal('register')">Register</button>
+                    <button class="btn btn-primary" onclick="openModal('login')">Login</button>
                 </div>
                 <div id="userMenuWrapper" style="display:none;position:relative;">
                     <button class="user-avatar" onclick="toggleUserMenu()" id="userAvatarBtn" aria-haspopup="true" aria-expanded="false">A</button>
@@ -446,8 +445,7 @@
         <a href="javascript:void(0)" onclick="scrollToEl('testimonials');toggleMobile()">Reviews</a>
         <a href="javascript:void(0)" onclick="scrollToEl('faq');toggleMobile()">FAQ</a>
         <div class="mobile-auth" id="mobileAuthButtons">
-            <button class="btn btn-ghost" onclick="openModal('login');toggleMobile()">Login</button>
-            <button class="btn btn-primary" onclick="openModal('register');toggleMobile()">Register</button>
+            <button class="btn btn-primary" onclick="openModal('login');toggleMobile()">Login</button>
         </div>
         <div class="mobile-auth" id="mobileUserButtons" style="display:none;">
             <button class="btn btn-ghost" onclick="showMyCourses();toggleMobile()">📚 My Courses</button>
@@ -549,7 +547,8 @@
                 <button type="button" class="forgot-link" onclick="handleForgotPassword()">Forgot password?</button>
                 <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;" id="loginBtn">Sign In</button>
             </form>
-            <p style="text-align:center;margin-top:1rem;font-size:0.85rem;color:var(--gray-600)">No account? <button type="button" onclick="closeModal('login');setTimeout(()=>openModal('register'),150)" style="color:var(--primary);font-weight:600;text-decoration:none;background:none;border:none;cursor:pointer;font-size:inherit;">Register</button></p>
+            <div style="display:flex;align-items:center;gap:0.75rem;margin:1.25rem 0 0.75rem;color:var(--gray-400);font-size:0.75rem;"><div style="flex:1;height:1px;background:var(--gray-200);"></div>NEW HERE?<div style="flex:1;height:1px;background:var(--gray-200);"></div></div>
+            <button type="button" class="btn btn-outline" style="width:100%;justify-content:center;" onclick="closeModal('login');setTimeout(()=>openModal('register'),150)">&#x2728; Create New Account</button>
         </div>
     </div>
 
