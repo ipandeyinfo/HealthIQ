@@ -136,43 +136,24 @@
         .hamburger { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-800); transition: var(--transition); }
         .hamburger.active { transform: rotate(90deg); }
 
-        .hero { padding: 8rem 1.5rem 4rem; position: relative; overflow: hidden; background: linear-gradient(160deg, var(--primary-light) 0%, var(--white) 50%, #f0f7ff 100%); }
-        /* Animated conic-gradient mesh background */
-        .hero::before { content: ''; position: absolute; inset: -40%; background: conic-gradient(from 0deg at 50% 50%, rgba(15,111,236,0.18), rgba(59,130,246,0.10), rgba(16,185,129,0.12), rgba(168,85,247,0.10), rgba(15,111,236,0.18)); filter: blur(80px); opacity: 0.55; animation: meshSpin 25s linear infinite; z-index: 0; pointer-events: none; }
-        .hero::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.6), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(255,255,255,0.5), transparent 55%); z-index: 0; pointer-events: none; }
-        @keyframes meshSpin { to { transform: rotate(360deg); } }
-        @media (prefers-reduced-motion: reduce) { .hero::before { animation: none; } }
+        .hero { padding: 9rem 2rem 5rem; position: relative; overflow: hidden; background: linear-gradient(160deg, var(--primary-light) 0%, var(--white) 40%, #f0f7ff 100%); text-align: center; }
+        /* Soft animated gradient mesh background — subtle, no rotation jank */
+        .hero::before { content: ''; position: absolute; top: -40%; right: -15%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(15,111,236,0.08) 0%, transparent 65%); border-radius: 50%; animation: heroFloat 8s ease-in-out infinite; z-index: 0; pointer-events: none; }
+        .hero::after { content: ''; position: absolute; bottom: -20%; left: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 65%); border-radius: 50%; animation: heroFloat 10s ease-in-out infinite reverse; z-index: 0; pointer-events: none; }
+        @keyframes heroFloat { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-20px) scale(1.03);} }
+        @media (prefers-reduced-motion: reduce) { .hero::before, .hero::after { animation: none; } }
 
-        /* Bento Grid Hero */
-        .bento-hero { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr; grid-template-rows: auto auto; gap: 1rem; position: relative; z-index: 1; }
-        .bento-cell { background: rgba(255,255,255,0.65); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255,255,255,0.7); border-radius: 22px; padding: 1.75rem; box-shadow: 0 10px 40px -10px rgba(15,23,42,0.15), inset 0 1px 0 rgba(255,255,255,0.9); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s ease; }
-        .bento-cell:hover { transform: translateY(-4px); box-shadow: 0 24px 60px -15px rgba(15,23,42,0.22), inset 0 1px 0 rgba(255,255,255,1); }
-        .bento-title { grid-column: 1; grid-row: 1; padding: 2.25rem 2rem; }
-        .bento-preview { grid-column: 2; grid-row: 1; display: flex; align-items: center; justify-content: center; min-height: 280px; background: linear-gradient(135deg, rgba(15,111,236,0.08), rgba(168,85,247,0.05)); position: relative; overflow: hidden; }
-        .bento-preview::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(15,111,236,0.15), transparent 60%); animation: pulseGlow 4s ease-in-out infinite; }
-        @keyframes pulseGlow { 0%,100%{opacity:0.7;} 50%{opacity:1;} }
-        .floating-book { font-size: 6rem; animation: floatBook 4s ease-in-out infinite; filter: drop-shadow(0 12px 30px rgba(15,111,236,0.35)); position: relative; z-index: 1; }
-        @keyframes floatBook { 0%,100%{transform:translateY(0) rotate(-5deg);} 50%{transform:translateY(-18px) rotate(5deg);} }
-        .bento-stats { grid-column: 1; grid-row: 2; padding: 1.5rem 2rem; }
-        .bento-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
-        .bento-ticker { grid-column: 2; grid-row: 2; padding: 1.25rem 1.5rem; overflow: hidden; position: relative; }
-        .bento-ticker h4 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--primary); font-weight: 700; margin-bottom: 0.6rem; }
-        .bento-ticker-track { display: flex; flex-direction: column; gap: 0.5rem; animation: tickerScroll 18s linear infinite; }
-        .bento-ticker-item { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.8rem; color: var(--gray-700); line-height: 1.4; padding: 0.5rem 0.65rem; background: rgba(15,111,236,0.06); border-radius: 10px; border-left: 3px solid var(--primary); }
-        .bento-ticker-item strong { display: block; font-size: 0.72rem; color: var(--primary-dark); margin-top: 0.2rem; }
-        @keyframes tickerScroll { 0%{transform:translateY(0);} 100%{transform:translateY(-50%);} }
-        .bento-ticker:hover .bento-ticker-track { animation-play-state: paused; }
-
-        .hero-content { text-align: left; position: relative; z-index: 1; }
-        .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.85); border: 1px solid rgba(15,111,236,0.2); color: var(--gray-800); padding: 0.45rem 1.1rem; border-radius: 24px; font-size: 0.78rem; font-weight: 600; margin-bottom: 1.25rem; backdrop-filter: blur(10px); box-shadow: 0 4px 16px rgba(15,111,236,0.08); animation: badgeGlow 3s ease-in-out infinite; }
-        @keyframes badgeGlow { 0%,100%{box-shadow: 0 4px 16px rgba(15,111,236,0.08);} 50%{box-shadow: 0 4px 24px rgba(15,111,236,0.2);} }
-        .hero h1 { font-size: 3rem; font-weight: 800; color: var(--gray-900); margin-bottom: 1rem; line-height: 1.1; letter-spacing: -1.5px; animation: fadeInUp 0.7s ease; }
+        .hero-content { max-width: 820px; margin: 0 auto; position: relative; z-index: 1; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--white); border: 1px solid var(--gray-200); color: var(--gray-800); padding: 0.5rem 1.2rem; border-radius: 24px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm), 0 0 20px rgba(15,111,236,0.05); animation: fadeInDown 0.6s ease, badgeGlow 3s ease-in-out infinite; }
+        @keyframes badgeGlow { 0%,100%{box-shadow: var(--shadow-sm), 0 0 20px rgba(15,111,236,0.05);} 50%{box-shadow: var(--shadow-sm), 0 0 20px rgba(15,111,236,0.12);} }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; color: var(--gray-900); margin-bottom: 1.2rem; line-height: 1.15; letter-spacing: -1.5px; animation: fadeInUp 0.7s ease; }
         .hero h1 .highlight { color: var(--primary); background: linear-gradient(135deg, var(--primary), #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .hero p { font-size: 1rem; color: var(--gray-600); margin-bottom: 1.75rem; line-height: 1.65; animation: fadeInUp 0.8s ease; max-width: 580px; }
-        .hero-buttons { display: flex; gap: 0.75rem; flex-wrap: wrap; animation: fadeInUp 0.9s ease; }
+        .hero p { font-size: 1.15rem; color: var(--gray-600); margin-bottom: 2.5rem; max-width: 620px; margin-left: auto; margin-right: auto; line-height: 1.7; animation: fadeInUp 0.8s ease; }
+        .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; animation: fadeInUp 0.9s ease; }
+        .hero-stats { display: flex; justify-content: center; gap: 3.5rem; margin-top: 3.5rem; padding-top: 2.5rem; border-top: 1px solid var(--gray-200); animation: fadeInUp 1s ease; }
         .stat-item { text-align: center; }
-        .stat-item h3 { font-size: 1.75rem; color: var(--primary); font-weight: 800; background: linear-gradient(135deg, var(--primary), #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .stat-item p { font-size: 0.72rem; color: var(--gray-600); margin-top: 0.15rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        .stat-item h3 { font-size: 2.2rem; color: var(--primary); font-weight: 800; background: linear-gradient(135deg, var(--primary), #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .stat-item p { font-size: 0.85rem; color: var(--gray-600); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.5px; }
         @keyframes fadeInUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
         @keyframes fadeInDown { from{opacity:0;transform:translateY(-10px);} to{opacity:1;transform:translateY(0);} }
 
@@ -197,18 +178,8 @@
         }
         [data-vt="modal"] { view-transition-name: modal; }
 
-        @media (max-width: 900px) {
-            .bento-hero { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto; }
-            .bento-title, .bento-preview, .bento-stats, .bento-ticker { grid-column: 1; }
-            .bento-title { grid-row: 1; padding: 1.75rem 1.5rem; }
-            .bento-preview { grid-row: 2; min-height: 200px; }
-            .bento-stats { grid-row: 3; }
-            .bento-ticker { grid-row: 4; }
-            .bento-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-            .hero h1 { font-size: 2.1rem; }
-            .floating-book { font-size: 4.5rem; }
-        }
-        @media (max-width: 600px) { .hero { padding: 7rem 1rem 3rem; } .hero h1 { font-size: 1.85rem; } }
+        @media (max-width: 768px) { .hero h1 { font-size: 2.2rem; } .hero-stats { gap: 1.5rem; flex-wrap: wrap; } }
+        @media (max-width: 600px) { .hero { padding: 7rem 1rem 3rem; } .hero h1 { font-size: 1.9rem; } }
         .reveal-item { opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.4,0,0.2,1); }
         .reveal-item.revealed { opacity: 1; transform: translateY(0); }
         .reveal-item:nth-child(2) { transition-delay: 0.1s; }
@@ -609,32 +580,19 @@
     </div>
 
     <section class="hero">
-        <div class="bento-hero">
-            <div class="bento-cell bento-title">
-                <div class="hero-content">
-                    <span class="hero-badge" id="heroBadge">🏅 By BHMS Gold Medalist | Trusted by 100+ Student</span>
-                    <h1 id="heroTitle">Premium <span class="highlight">BHMS</span> Handwritten &amp; Digital Notes</h1>
-                    <p id="heroDesc">High-yield handwritten notes, BHMS study material, MD prep resources, and clinical case studies &mdash; crafted by a BHMS Gold Medalist for your academic success.</p>
-                    <div class="hero-buttons">
-                        <a href="javascript:void(0)" onclick="scrollToEl('pricing')" class="btn btn-primary btn-lg magnetic">Buy Access</a>
-                        <a href="javascript:void(0)" onclick="scrollToEl('courses')" class="btn btn-outline btn-lg magnetic">&#x1F4DA; Explore Courses</a>
-                    </div>
-                </div>
+        <div class="hero-content">
+            <span class="hero-badge" id="heroBadge">🏅 By BHMS Gold Medalist | Trusted by 100+ Student</span>
+            <h1 id="heroTitle">Premium <span class="highlight">BHMS</span> Handwritten &amp; Digital Notes</h1>
+            <p id="heroDesc">High-yield handwritten notes, BHMS study material, MD prep resources, and clinical case studies &mdash; crafted by a BHMS Gold Medalist for your academic success.</p>
+            <div class="hero-buttons">
+                <a href="javascript:void(0)" onclick="scrollToEl('pricing')" class="btn btn-primary btn-lg magnetic">Buy Access</a>
+                <a href="javascript:void(0)" onclick="scrollToEl('courses')" class="btn btn-outline btn-lg magnetic">&#x1F4DA; Explore Courses</a>
             </div>
-            <div class="bento-cell bento-preview" aria-hidden="true">
-                <div class="floating-book">&#x1F4D6;</div>
-            </div>
-            <div class="bento-cell bento-stats">
-                <div class="bento-stats-grid">
-                    <div class="stat-item"><h3 class="counter" data-target="10000">0</h3><p>Students</p></div>
-                    <div class="stat-item"><h3 class="counter" data-target="250">0</h3><p>Notes</p></div>
-                    <div class="stat-item"><h3 class="counter" data-target="98">0</h3><p>% Satisfaction</p></div>
-                    <div class="stat-item"><h3 class="counter" data-target="50">0</h3><p>Authors</p></div>
-                </div>
-            </div>
-            <div class="bento-cell bento-ticker" id="bentoTicker">
-                <h4>&#x2728; Latest Reviews</h4>
-                <div class="bento-ticker-track" id="bentoTickerTrack"></div>
+            <div class="hero-stats">
+                <div class="stat-item"><h3 class="counter" data-target="10000">0</h3><p>Students</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="250">0</h3><p>Notes Available</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="98">0</h3><p>% Satisfaction</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="50">0</h3><p>Expert Authors</p></div>
             </div>
         </div>
     </section>
@@ -2059,21 +2017,6 @@
         a.click();
         showToast('Certificate downloaded!','success');
     }
-
-    // ===== BENTO TICKER (testimonial ticker in hero) =====
-    function renderBentoTicker(){
-        const track = document.getElementById('bentoTickerTrack'); if(!track) return;
-        const items = (typeof getTestimonials==='function') ? getTestimonials() : [];
-        if(!items.length) return;
-        const html = items.map(t => '<div class="bento-ticker-item">&#x1F4AC;<div>&ldquo;'+Utils.escapeHtml(t.text.slice(0,90)+(t.text.length>90?'...':''))+'&rdquo;<strong>&mdash; '+Utils.escapeHtml(t.name)+'</strong></div></div>').join('');
-        track.innerHTML = html + html; // duplicate for seamless loop
-    }
-    // Patch renderTestimonials to also refresh the ticker
-    if(typeof renderTestimonials === 'function'){
-        const _origRenderTestimonials = renderTestimonials;
-        renderTestimonials = function(){ _origRenderTestimonials.apply(this, arguments); renderBentoTicker(); };
-    }
-    setTimeout(renderBentoTicker, 800);
 
     // ===== MAGNETIC BUTTONS =====
     (function initMagnetic(){
