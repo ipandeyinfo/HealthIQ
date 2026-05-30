@@ -1255,7 +1255,8 @@
         try {
             let q = db.from('courses').select('*').order('created_at', {ascending:false});
             const { data, error } = await q; if(error) throw error;
-            APP.courses = data || [];
+            // Hide soft-deleted courses (slug prefixed with _deleted_) from everywhere
+            APP.courses = (data || []).filter(c => !(c.slug || '').startsWith('_deleted_'));
         } catch(e) { console.error(e); APP.courses = []; }
         renderCourses(); renderPricingPlans();
     }
@@ -1273,20 +1274,39 @@
     }
     async function deleteCourseFromDb(id) {
         if(!isSupabaseConfigured()) return {success:false, error:{message:'DB not configured'}};
+        // STRATEGY: try hard delete (with child cascade). If that fails for ANY reason
+        // (RLS policy, missing cascade, unknown FK table, etc.) — fall back to a soft delete
+        // by marking the course unpublished + renaming slug/title. Admin UPDATE almost always
+        // works even when DELETE is blocked. Soft-deleted courses are filtered out everywhere.
+        let hardErr = null;
         try {
-            // Best-effort cascade: clear all child rows that reference this course. Silently
-            // ignore "table does not exist" errors so this works even before the optional
-            // analytics tables (course_views / study_sessions / bookmarks) are created.
-            const childTables = ['enrollments','orders','course_views','study_sessions','bookmarks'];
+            const childTables = ['enrollments','orders','course_views','study_sessions','bookmarks','reviews','course_modules','lessons'];
             for(const t of childTables){
                 try { await db.from(t).delete().eq('course_id', id); } catch(_){}
             }
-            const {error} = await db.from('courses').delete().eq('id', id);
+            const {error, data, count} = await db.from('courses').delete({count:'exact'}).eq('id', id).select();
             if(error) throw error;
-            return {success:true};
+            // Supabase returns no error but 0 rows when RLS silently blocks — treat that as failure too.
+            if((data && data.length===0) || count===0){ hardErr = new Error('No rows deleted (likely blocked by RLS policy on courses table)'); }
+            else return {success:true, mode:'hard'};
         } catch(e) {
-            console.error('deleteCourseFromDb error:', e);
-            return {success:false, error:e};
+            hardErr = e;
+            console.warn('Hard delete failed, attempting soft delete:', e);
+        }
+        // ----- SOFT DELETE FALLBACK -----
+        try {
+            const stamp = Date.now();
+            const {error: ue, data: ud} = await db.from('courses').update({
+                is_published: false,
+                is_featured: false,
+                slug: '_deleted_'+stamp+'_'+id
+            }).eq('id', id).select();
+            if(ue) throw ue;
+            if(!ud || ud.length===0) throw new Error('Soft delete update returned 0 rows (RLS may also block UPDATE)');
+            return {success:true, mode:'soft', warning: hardErr?.message};
+        } catch(e2) {
+            console.error('Soft delete also failed:', e2);
+            return {success:false, error: hardErr || e2};
         }
     }
 
@@ -1874,7 +1894,7 @@
         const r=await saveCourseToDb(d); if(!r.success){showToast('Error: '+(r.error?.message||'Unknown'),'error');return;}
         showToast(id?'Course updated!':'Course added!'); closeModal('course'); await fetchCourses(); if(document.getElementById('adminPanel').classList.contains('active'))renderAdminCourses();
     }
-    async function deleteCourse(id) { adminConfirm('Delete this course permanently? This cannot be undone.', async()=>{ const r=await deleteCourseFromDb(id); if(!r.success){const msg=r.error?.message||r.error?.details||r.error?.hint||'Unknown error'; showToast('Delete failed: '+msg,'error'); console.error('Delete course failed:',r.error); return;} showToast('Course deleted!'); await fetchCourses(); updateSidebarCounts(); if(document.getElementById('adminPanel').classList.contains('active'))renderAdminCourses(); }); }
+    async function deleteCourse(id) { adminConfirm('Delete this course permanently? This cannot be undone.', async()=>{ const r=await deleteCourseFromDb(id); if(!r.success){const msg=r.error?.message||r.error?.details||r.error?.hint||'Unknown error'; showToast('Delete failed: '+msg,'error'); console.error('Delete course failed:',r.error); return;} if(r.mode==='soft'){showToast('Course removed (soft-delete used because DB blocked hard delete)','warning');}else{showToast('Course deleted!');} await fetchCourses(); updateSidebarCounts(); if(document.getElementById('adminPanel').classList.contains('active'))renderAdminCourses(); }); }
 
     // ===== ENROLLMENT (UPI Payment Flow) =====
     function enrollCourse(courseId, title, price) {
