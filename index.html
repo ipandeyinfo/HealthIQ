@@ -8,11 +8,7 @@
     <title>HealthIQ - BHMS &amp; MD Homoeopathy Notes by Gold Medalist</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://ejpwabynzdjfecsrgumh.supabase.co" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Load Supabase SDK synchronously in head - small file, ensures availability -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onload="window.__sdkReady=true;if(window.__initDB)window.__initDB();" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js';s.onload=function(){window.__sdkReady=true;if(window.__initDB)window.__initDB();};s.onerror=function(){var s2=document.createElement('script');s2.src='https://cdn.skypack.dev/@supabase/supabase-js@2';s2.onload=function(){window.__sdkReady=true;if(window.__initDB)window.__initDB();};s2.onerror=function(){window.__sdkFailed=true;};document.head.appendChild(s2);};document.head.appendChild(s);"></script>
     <style>
         :root {
             --primary: #0f6fec;
@@ -246,10 +242,6 @@
         .user-menu-item { padding: 0.6rem 1rem; font-size: 0.85rem; color: var(--gray-800); cursor: pointer; border-radius: 6px; transition: var(--transition); display: flex; align-items: center; gap: 0.5rem; border: none; background: none; width: 100%; text-align: left; }
         .user-menu-item:hover { background: var(--gray-50); }
         .user-menu-item.danger { color: var(--danger); }
-        .user-menu-header { padding: 0.75rem 1rem 0.5rem; }
-        .user-menu-header .um-name { font-size: 0.9rem; font-weight: 700; color: var(--gray-900); }
-        .user-menu-header .um-email { font-size: 0.75rem; color: var(--gray-600); margin-top: 0.1rem; }
-        .user-menu-divider { height: 1px; background: var(--gray-200); margin: 0.35rem 0; }
 
         .admin-panel { display: none; position: fixed; inset: 0; background: var(--gray-50); z-index: 3000; overflow-y: auto; }
         .admin-panel.active { display: block; animation: adminSlideIn 0.4s ease; }
@@ -431,19 +423,16 @@
                 <li><a href="javascript:void(0)" onclick="scrollToEl('faq')">FAQ</a></li>
             </ul>
             <div class="nav-actions">
+                <button class="dark-toggle" onclick="toggleDark()" aria-label="Toggle dark mode">&#x1F319;</button>
                 <div id="authButtons">
-                    <button class="btn btn-primary" onclick="openModal('login')">Login</button>
+                    <button class="btn btn-ghost" onclick="openModal('login')">Login</button>
+                    <button class="btn btn-primary" onclick="openModal('register')">Register</button>
                 </div>
                 <div id="userMenuWrapper" style="display:none;position:relative;">
                     <button class="user-avatar" onclick="toggleUserMenu()" id="userAvatarBtn" aria-haspopup="true" aria-expanded="false">A</button>
                     <div class="user-menu" id="userMenu" role="menu">
-                        <div class="user-menu-header" id="userMenuHeader"></div>
-                        <div class="user-menu-divider"></div>
                         <button class="user-menu-item" onclick="showMyCourses()">&#x1F4DA; My Courses</button>
                         <button class="user-menu-item" onclick="openAdminPanel()" id="adminMenuItem" style="display:none;">&#x1F4CA; Admin</button>
-                        <button class="user-menu-item" onclick="openEditUsername()">&#x270F;&#xFE0F; Edit Username</button>
-                        <button class="user-menu-item" onclick="toggleDark();toggleUserMenu()">&#x1F319; Toggle Theme</button>
-                        <div class="user-menu-divider"></div>
                         <button class="user-menu-item danger" onclick="logout()">&#x1F6AA; Logout</button>
                     </div>
                 </div>
@@ -457,7 +446,8 @@
         <a href="javascript:void(0)" onclick="scrollToEl('testimonials');toggleMobile()">Reviews</a>
         <a href="javascript:void(0)" onclick="scrollToEl('faq');toggleMobile()">FAQ</a>
         <div class="mobile-auth" id="mobileAuthButtons">
-            <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="openModal('login');toggleMobile()">Login</button>
+            <button class="btn btn-ghost" onclick="openModal('login');toggleMobile()">Login</button>
+            <button class="btn btn-primary" onclick="openModal('register');toggleMobile()">Register</button>
         </div>
         <div class="mobile-auth" id="mobileUserButtons" style="display:none;">
             <button class="btn btn-ghost" onclick="showMyCourses();toggleMobile()">📚 My Courses</button>
@@ -476,10 +466,10 @@
                 <a href="javascript:void(0)" onclick="scrollToEl('courses')" class="btn btn-outline btn-lg">&#x1F4DA; Explore Courses</a>
             </div>
             <div class="hero-stats">
-                <div class="stat-item"><h3 class="counter" data-target="10000" data-suffix="+">0</h3><p>Students</p></div>
-                <div class="stat-item"><h3 class="counter" data-target="250" data-suffix="+">0</h3><p>Notes Available</p></div>
-                <div class="stat-item"><h3 class="counter" data-target="98" data-suffix="%">0</h3><p>% Satisfaction</p></div>
-                <div class="stat-item"><h3 class="counter" data-target="50" data-suffix="+">0</h3><p>Expert Authors</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="10000">0</h3><p>Students</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="250">0</h3><p>Notes Available</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="98">0</h3><p>% Satisfaction</p></div>
+                <div class="stat-item"><h3 class="counter" data-target="50">0</h3><p>Expert Authors</p></div>
             </div>
         </div>
     </section>
@@ -666,19 +656,6 @@
     function toggleFaq(el) { const item = el.parentElement; item.classList.toggle('active'); el.setAttribute('aria-expanded', item.classList.contains('active')); }
     function toggleUserMenu() { document.getElementById('userMenu').classList.toggle('active'); }
 
-    async function openEditUsername() {
-        toggleUserMenu();
-        const newName = prompt('Enter new username:', APP.currentUser.name);
-        if(!newName || newName.trim()==='' || newName.trim()===APP.currentUser.name) return;
-        try {
-            const {error} = await db.from('profiles').update({full_name:newName.trim()}).eq('id',APP.currentUser.id);
-            if(error) throw error;
-            APP.currentUser.name = newName.trim();
-            updateAuthUI();
-            Utils.showToast('Username updated!','success');
-        } catch(e) { Utils.showToast('Failed to update username','error'); console.error(e); }
-    }
-
     document.addEventListener('click', e => { if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active'); if(!e.target.closest('#userMenuWrapper')) document.getElementById('userMenu')?.classList.remove('active'); });
     document.addEventListener('keydown', e => { if(e.key==='Escape') { document.querySelectorAll('.modal-overlay.active').forEach(m=>m.classList.remove('active')); } });
     document.querySelectorAll('.mobile-nav a').forEach(a => a.addEventListener('click', () => document.getElementById('mobileNav').classList.remove('active')));
@@ -695,34 +672,15 @@
             setItem: (key, val) => { memStore[key]=val; try { localStorage.setItem(key, val); } catch(e) {} try { sessionStorage.setItem(key, val); } catch(e) {} },
             removeItem: (key) => { delete memStore[key]; try { localStorage.removeItem(key); } catch(e) {} try { sessionStorage.removeItem(key); } catch(e) {} }
         };
-        window.__initDB = function initDB() {
-            if(db) return;
-            if(!window.supabase) return;
-            try {
-                db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {auth:{persistSession:true,storageKey:'healthiq-auth',storage:iframeStorage,autoRefreshToken:true,detectSessionInUrl:true}});
-                const ob=document.getElementById('offlineBanner'); if(ob) ob.classList.remove('active');
-                if(typeof appInit==='function') appInit();
-            } catch(e) { console.error('initDB failed:',e); }
-        };
-        // IMPORTANT: defer init to next tick so rest of script (const APP, DEFAULT_SETTINGS, appInit) finishes parsing
-        function tryInit(){
-            if(window.supabase){ window.__initDB(); return true; }
-            return false;
+        let retries=0; const maxRetries=3;
+        function loadSDK() {
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+            s.onload = () => { db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {auth:{persistSession:true,storageKey:'healthiq-auth',storage:iframeStorage,autoRefreshToken:true,detectSessionInUrl:true}}); document.getElementById('offlineBanner').classList.remove('active'); if(typeof appInit==='function') appInit(); };
+            s.onerror = () => { retries++; if(retries<maxRetries){setTimeout(loadSDK,2000*retries);}else{document.getElementById('offlineBanner').classList.add('active');showToast('Connection failed after '+maxRetries+' attempts. Please refresh.','error');} };
+            document.head.appendChild(s);
         }
-        // Try after current script execution completes
-        setTimeout(()=>{
-            if(tryInit()) return;
-            // Poll up to 20 seconds
-            let waited=0; const interval=setInterval(()=>{
-                if(tryInit()){clearInterval(interval);}
-                else if(waited>=20000){
-                    clearInterval(interval);
-                    const ob=document.getElementById('offlineBanner'); if(ob) ob.classList.add('active');
-                    console.error('Supabase SDK failed to load after 20s');
-                }
-                waited+=200;
-            },200);
-        },0);
+        loadSDK();
     })();
     function isSupabaseConfigured() { return !!db; }
 
@@ -795,20 +753,10 @@
         const badge=document.getElementById('heroBadge'); if(badge) badge.innerHTML=s.hero_badge||DEFAULT_SETTINGS.hero_badge;
         const title=document.getElementById('heroTitle'); if(title) title.innerHTML=s.hero_title||DEFAULT_SETTINGS.hero_title;
         const desc=document.getElementById('heroDesc'); if(desc) desc.innerHTML=s.hero_description||DEFAULT_SETTINGS.hero_description;
-        // Stats - update targets, suffix, labels (animation triggered by observer)
+        // Stats - update targets and re-animate
         const counters=document.querySelectorAll('.stat-item');
         const statData=[{v:s.stat_1_value,l:s.stat_1_label},{v:s.stat_2_value,l:s.stat_2_label},{v:s.stat_3_value,l:s.stat_3_label},{v:s.stat_4_value,l:s.stat_4_label}];
-        statData.forEach((sd,i)=>{
-            if(counters[i]){
-                const h=counters[i].querySelector('h3');
-                const val=(sd.v!=null&&sd.v!=='')?String(sd.v):'0';
-                h.dataset.target=val;
-                h.dataset.suffix=(sd.l||'').includes('%')?'%':'+';
-                counters[i].querySelector('p').textContent=sd.l||'';
-                // Set static value immediately so user always sees a number
-                h.textContent=(+val).toLocaleString()+h.dataset.suffix;
-            }
-        });
+        statData.forEach((sd,i)=>{if(counters[i]){const h=counters[i].querySelector('h3'); h.dataset.target=sd.v||'0'; h.dataset.suffix=sd.l.includes('%')?'%':'+'; counters[i].querySelector('p').textContent=sd.l; animateCounter(h);}});
         // Courses section
         const ct=document.getElementById('coursesTitle'); if(ct) ct.textContent=s.courses_title||DEFAULT_SETTINGS.courses_title;
         const cs=document.getElementById('coursesSubtitle'); if(cs) cs.textContent=s.courses_subtitle||DEFAULT_SETTINGS.courses_subtitle;
@@ -843,10 +791,7 @@
     async function handleForgotPassword() {
         const email=document.getElementById('loginEmail').value.trim();
         if(!email){showToast('Enter your email first, then click Forgot Password','warning');return;}
-        if(!isSupabaseConfigured()){
-            for(let i=0;i<10;i++){await new Promise(r=>setTimeout(r,500));if(isSupabaseConfigured())break;}
-            if(!isSupabaseConfigured()){showToast('Connecting to server... please try again','warning');return;}
-        }
+        if(!isSupabaseConfigured()){showToast('Service unavailable','error');return;}
         try{
             const{error}=await db.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname});
             if(error)throw error;
@@ -952,16 +897,8 @@
         event.preventDefault();
         const email=document.getElementById('loginEmail').value.trim(), pass=document.getElementById('loginPassword').value;
         if(!email||!pass){showToast('Please fill all fields','error');return;}
+        if(!isSupabaseConfigured()){showToast('Service unavailable','error');return;}
         const btn=document.getElementById('loginBtn'); btn.classList.add('btn-loading'); btn.disabled=true;
-        // Wait for SDK to load (up to 15 seconds), try to init if SDK loaded but db not yet
-        if(!isSupabaseConfigured()){
-            for(let i=0;i<30;i++){
-                if(window.supabase && !db && window.__initDB){window.__initDB();}
-                if(isSupabaseConfigured())break;
-                await new Promise(r=>setTimeout(r,500));
-            }
-            if(!isSupabaseConfigured()){btn.classList.remove('btn-loading');btn.disabled=false;showToast(window.__sdkFailed?'SDK blocked - check ad-blocker / network':'Server still loading, please wait a moment and try again','error');return;}
-        }
         try {
             const {data,error}=await db.auth.signInWithPassword({email,password:pass}); if(error)throw error;
             const {data:profile}=await db.from('profiles').select('*').eq('id',data.user.id).single();
@@ -981,11 +918,8 @@
         const fn=document.getElementById('regFirstName').value.trim(), ln=document.getElementById('regLastName').value.trim(), un=document.getElementById('regUsername').value.trim(), em=document.getElementById('regEmail').value.trim(), pw=document.getElementById('regPassword').value;
         if(!fn||!ln||!un||!em||!pw){showToast('Fill all fields','error');return;}
         if(pw.length<6){showToast('Password min 6 chars','error');return;}
+        if(!isSupabaseConfigured()){showToast('Service unavailable','error');return;}
         const btn=document.getElementById('registerBtn'); btn.classList.add('btn-loading'); btn.disabled=true;
-        if(!isSupabaseConfigured()){
-            for(let i=0;i<10;i++){await new Promise(r=>setTimeout(r,500));if(isSupabaseConfigured())break;}
-            if(!isSupabaseConfigured()){btn.classList.remove('btn-loading');btn.disabled=false;showToast('Connecting to server... please try again','warning');return;}
-        }
         try {
             const {data,error}=await db.auth.signUp({email:em,password:pw,options:{data:{full_name:fn+' '+ln,first_name:fn,last_name:ln,username:un}}}); if(error)throw error;
             if(data.user&&data.session){await new Promise(r=>setTimeout(r,800)); const{data:p}=await db.from('profiles').select('*').eq('id',data.user.id).single(); APP.userProfile=p; APP.currentUser={id:data.user.id,name:fn+' '+ln,email:em,role:'student'}; closeModal('register'); updateAuthUI(); renderCourses(); showToast('Account created! Welcome!');}
@@ -1010,9 +944,6 @@
         const ma=document.getElementById('mobileAuthButtons'), mu=document.getElementById('mobileUserButtons'), mb=document.getElementById('mobileAdminBtn');
         if(APP.currentUser){
             a.style.display='none';u.style.display='block';document.getElementById('userAvatarBtn').textContent=APP.currentUser.name.charAt(0).toUpperCase();
-            // Populate user menu header
-            const umh=document.getElementById('userMenuHeader');
-            if(umh) umh.innerHTML='<div class="um-name">'+Utils.escapeHtml(APP.currentUser.name)+'</div><div class="um-email">'+Utils.escapeHtml(APP.currentUser.email)+'</div>';
             if(m)m.style.display=APP.currentUser.role==='admin'?'flex':'none';
             if(APP.currentUser.role==='admin')document.body.classList.add('admin-mode');else document.body.classList.remove('admin-mode');
             if(ma)ma.style.display='none'; if(mu)mu.style.display='flex';
@@ -1640,25 +1571,9 @@
     }
 
     // ===== COUNTERS =====
-    function animateCounter(el) {
-        const tgt=+el.dataset.target;
-        if(!tgt||isNaN(tgt)){ el.textContent='0'+(el.dataset.suffix||''); return; }
-        const suffix=el.dataset.suffix||'+';
-        // Cancel any existing animation on this element
-        if(el._rafId) cancelAnimationFrame(el._rafId);
-        const start=performance.now();
-        const tick=(now)=>{
-            const p=Math.min((now-start)/1500,1);
-            // Ease-out cubic for nicer feel
-            const eased=1-Math.pow(1-p,3);
-            el.textContent=Math.floor(eased*tgt).toLocaleString()+suffix;
-            if(p<1) el._rafId=requestAnimationFrame(tick);
-            else { el._rafId=null; el.textContent=tgt.toLocaleString()+suffix; }
-        };
-        el._rafId=requestAnimationFrame(tick);
-    }
-    const cObs=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){animateCounter(en.target);cObs.unobserve(en.target);}});},{threshold:0.3});
-    // Defer observer setup until after data loaded - done inside appInit
+    function animateCounter(el) { const tgt=+el.dataset.target; if(!tgt)return; const suffix=el.dataset.suffix||'+'; const start=performance.now(); (function up(now){const p=Math.min((now-start)/2000,1);el.textContent=Math.floor(p*tgt).toLocaleString()+suffix;if(p<1)requestAnimationFrame(up);})(start); }
+    const cObs=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){animateCounter(en.target);cObs.unobserve(en.target);}});},{threshold:0.5});
+    document.querySelectorAll('.counter').forEach(c=>cObs.observe(c));
 
     // ===== SCROLL REVEAL =====
     const revealObserver = new IntersectionObserver((entries) => { entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('revealed'); revealObserver.unobserve(e.target); } }); }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
@@ -1668,28 +1583,7 @@
     window.addEventListener('scroll', () => { document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
 
     // ===== INIT =====
-    async function appInit() {
-        // Always apply defaults first so page looks good even without network
-        for(const k in DEFAULT_SETTINGS){ if(!APP.settings[k]) APP.settings[k]=DEFAULT_SETTINGS[k]; }
-        applySettings(); renderCourses(); renderPricingPlans();
-        // Then try to fetch from Supabase (each independent)
-        try { await fetchSettings(); } catch(e){ console.warn('fetchSettings failed:',e); }
-        try { await fetchCourses(); } catch(e){ console.warn('fetchCourses failed:',e); }
-        try { await initAuth(); } catch(e){ console.warn('initAuth failed:',e); }
-        if(APP.currentUser){
-            try { await fetchMyEnrollments(); } catch(e){}
-            try { await fetchMyOrders(); } catch(e){}
-        }
-        // Final render with all data
-        renderCourses(); renderPricingPlans(); renderTestimonials(); renderFAQs();
-        // Now that targets are finalized, set up counter animation observer
-        document.querySelectorAll('.counter').forEach(c=>{
-            // If already visible (above the fold), animate now
-            const rect=c.getBoundingClientRect();
-            if(rect.top<window.innerHeight&&rect.bottom>0){ animateCounter(c); }
-            else { cObs.observe(c); }
-        });
-    }
+    async function appInit() { try{await fetchSettings();await fetchCourses();await initAuth();if(APP.currentUser){await fetchMyEnrollments();await fetchMyOrders();renderCourses();renderPricingPlans();}}catch(e){console.error(e);} }
     async function fetchMyOrders() { if(!APP.currentUser)return; try{const{data,error}=await db.from('orders').select('id,course_id,user_id,status').eq('user_id',APP.currentUser.id); console.log('fetchMyOrders:',{data,error}); if(!error)APP.orders=data||[];}catch(e){console.error('fetchMyOrders error:',e);} }
     </script>
 </body>
