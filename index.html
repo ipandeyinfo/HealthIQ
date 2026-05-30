@@ -242,6 +242,10 @@
         .user-menu-item { padding: 0.6rem 1rem; font-size: 0.85rem; color: var(--gray-800); cursor: pointer; border-radius: 6px; transition: var(--transition); display: flex; align-items: center; gap: 0.5rem; border: none; background: none; width: 100%; text-align: left; }
         .user-menu-item:hover { background: var(--gray-50); }
         .user-menu-item.danger { color: var(--danger); }
+        .user-menu-header { padding: 0.75rem 1rem 0.5rem; }
+        .user-menu-header .um-name { font-size: 0.9rem; font-weight: 700; color: var(--gray-900); }
+        .user-menu-header .um-email { font-size: 0.75rem; color: var(--gray-600); margin-top: 0.1rem; }
+        .user-menu-divider { height: 1px; background: var(--gray-200); margin: 0.35rem 0; }
 
         .admin-panel { display: none; position: fixed; inset: 0; background: var(--gray-50); z-index: 3000; overflow-y: auto; }
         .admin-panel.active { display: block; animation: adminSlideIn 0.4s ease; }
@@ -423,16 +427,19 @@
                 <li><a href="javascript:void(0)" onclick="scrollToEl('faq')">FAQ</a></li>
             </ul>
             <div class="nav-actions">
-                <button class="dark-toggle" onclick="toggleDark()" aria-label="Toggle dark mode">&#x1F319;</button>
                 <div id="authButtons">
-                    <button class="btn btn-ghost" onclick="openModal('login')">Login</button>
-                    <button class="btn btn-primary" onclick="openModal('register')">Register</button>
+                    <button class="btn btn-primary" onclick="openModal('login')">Login</button>
                 </div>
                 <div id="userMenuWrapper" style="display:none;position:relative;">
                     <button class="user-avatar" onclick="toggleUserMenu()" id="userAvatarBtn" aria-haspopup="true" aria-expanded="false">A</button>
                     <div class="user-menu" id="userMenu" role="menu">
+                        <div class="user-menu-header" id="userMenuHeader"></div>
+                        <div class="user-menu-divider"></div>
                         <button class="user-menu-item" onclick="showMyCourses()">&#x1F4DA; My Courses</button>
                         <button class="user-menu-item" onclick="openAdminPanel()" id="adminMenuItem" style="display:none;">&#x1F4CA; Admin</button>
+                        <button class="user-menu-item" onclick="openEditUsername()">&#x270F;&#xFE0F; Edit Username</button>
+                        <button class="user-menu-item" onclick="toggleDark();toggleUserMenu()">&#x1F319; Toggle Theme</button>
+                        <div class="user-menu-divider"></div>
                         <button class="user-menu-item danger" onclick="logout()">&#x1F6AA; Logout</button>
                     </div>
                 </div>
@@ -446,8 +453,7 @@
         <a href="javascript:void(0)" onclick="scrollToEl('testimonials');toggleMobile()">Reviews</a>
         <a href="javascript:void(0)" onclick="scrollToEl('faq');toggleMobile()">FAQ</a>
         <div class="mobile-auth" id="mobileAuthButtons">
-            <button class="btn btn-ghost" onclick="openModal('login');toggleMobile()">Login</button>
-            <button class="btn btn-primary" onclick="openModal('register');toggleMobile()">Register</button>
+            <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="openModal('login');toggleMobile()">Login</button>
         </div>
         <div class="mobile-auth" id="mobileUserButtons" style="display:none;">
             <button class="btn btn-ghost" onclick="showMyCourses();toggleMobile()">📚 My Courses</button>
@@ -655,6 +661,19 @@
     function toggleAdminSidebar() { const sb=document.getElementById('adminSidebar'); const ov=document.getElementById('adminSidebarOverlay'); sb.classList.toggle('mobile-open'); ov.classList.toggle('active'); }
     function toggleFaq(el) { const item = el.parentElement; item.classList.toggle('active'); el.setAttribute('aria-expanded', item.classList.contains('active')); }
     function toggleUserMenu() { document.getElementById('userMenu').classList.toggle('active'); }
+
+    async function openEditUsername() {
+        toggleUserMenu();
+        const newName = prompt('Enter new username:', APP.currentUser.name);
+        if(!newName || newName.trim()==='' || newName.trim()===APP.currentUser.name) return;
+        try {
+            const {error} = await db.from('profiles').update({full_name:newName.trim()}).eq('id',APP.currentUser.id);
+            if(error) throw error;
+            APP.currentUser.name = newName.trim();
+            updateAuthUI();
+            Utils.showToast('Username updated!','success');
+        } catch(e) { Utils.showToast('Failed to update username','error'); console.error(e); }
+    }
 
     document.addEventListener('click', e => { if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active'); if(!e.target.closest('#userMenuWrapper')) document.getElementById('userMenu')?.classList.remove('active'); });
     document.addEventListener('keydown', e => { if(e.key==='Escape') { document.querySelectorAll('.modal-overlay.active').forEach(m=>m.classList.remove('active')); } });
@@ -944,6 +963,9 @@
         const ma=document.getElementById('mobileAuthButtons'), mu=document.getElementById('mobileUserButtons'), mb=document.getElementById('mobileAdminBtn');
         if(APP.currentUser){
             a.style.display='none';u.style.display='block';document.getElementById('userAvatarBtn').textContent=APP.currentUser.name.charAt(0).toUpperCase();
+            // Populate user menu header
+            const umh=document.getElementById('userMenuHeader');
+            if(umh) umh.innerHTML='<div class="um-name">'+Utils.escapeHtml(APP.currentUser.name)+'</div><div class="um-email">'+Utils.escapeHtml(APP.currentUser.email)+'</div>';
             if(m)m.style.display=APP.currentUser.role==='admin'?'flex':'none';
             if(APP.currentUser.role==='admin')document.body.classList.add('admin-mode');else document.body.classList.remove('admin-mode');
             if(ma)ma.style.display='none'; if(mu)mu.style.display='flex';
