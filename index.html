@@ -36,11 +36,28 @@
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         [data-theme="dark"] {
-            --white: #0f172a; --gray-50: #1e293b; --gray-100: #1e293b;
-            --gray-200: #334155; --gray-300: #475569; --gray-600: #94a3b8;
-            --gray-800: #e2e8f0; --gray-900: #f8fafc; --primary-light: #1e3a5f;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3); --shadow-md: 0 4px 16px rgba(0,0,0,0.4); --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+            --white: #0a0f1a; --gray-50: #111827; --gray-100: #1a2332;
+            --gray-200: #2a3548; --gray-300: #3d4f66; --gray-600: #a8b8cc;
+            --gray-800: #e8edf5; --gray-900: #f8fafc; --primary-light: #0f2847;
+            --primary: #3b8bff; --primary-dark: #2a7aee;
+            --shadow-sm: 0 1px 4px rgba(0,0,0,0.4); --shadow-md: 0 4px 20px rgba(0,0,0,0.5); --shadow-lg: 0 10px 40px rgba(0,0,0,0.6); --shadow-xl: 0 20px 60px rgba(0,0,0,0.7);
         }
+        [data-theme="dark"] body { letter-spacing: 0.01em; }
+        [data-theme="dark"] .hero { background: linear-gradient(160deg, #0a0f1a 0%, #0f1929 40%, #111d2e 100%); }
+        [data-theme="dark"] .hero::before { background: radial-gradient(circle, rgba(59,139,255,0.08) 0%, transparent 65%); }
+        [data-theme="dark"] .course-card, [data-theme="dark"] .feature-card, [data-theme="dark"] .pricing-card, [data-theme="dark"] .testimonial-card, [data-theme="dark"] .faq-item { background: #111827; border-color: #1e293b; }
+        [data-theme="dark"] .pricing-card.popular { background: linear-gradient(135deg, #0f2847 0%, #111827 100%); border-color: var(--primary); }
+        [data-theme="dark"] .section-alt { background: #0d1320; }
+        [data-theme="dark"] .navbar { background: rgba(10,15,26,0.95); border-bottom-color: #1e293b; }
+        [data-theme="dark"] .modal { background: #111827; border: 1px solid #1e293b; }
+        [data-theme="dark"] .admin-panel { background: #0a0f1a; }
+        [data-theme="dark"] .admin-sidebar { background: #0d1320; border-color: #1e293b; }
+        [data-theme="dark"] .admin-table tr:hover { background: #1a2332; }
+        [data-theme="dark"] .settings-card { background: #111827; border-color: #1e293b; }
+        [data-theme="dark"] .settings-card-header, [data-theme="dark"] .settings-card-footer { background: #0d1320; }
+        [data-theme="dark"] .settings-field input, [data-theme="dark"] .settings-field textarea { background: #0a0f1a; border-color: #2a3548; color: #e8edf5; }
+        [data-theme="dark"] .btn-outline { border-color: var(--primary); color: var(--primary); }
+        [data-theme="dark"] .footer { background: #060a12; border-top: 1px solid #1e293b; }
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--gray-800); background: var(--white); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
