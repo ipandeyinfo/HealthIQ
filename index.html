@@ -8,7 +8,11 @@
     <title>HealthIQ - BHMS &amp; MD Homoeopathy Notes by Gold Medalist</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://ejpwabynzdjfecsrgumh.supabase.co" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Load Supabase SDK early in head with async fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js';s.defer=true;s.onerror=()=>{window.__sdkFailed=true;};document.head.appendChild(s);"></script>
     <style>
         :root {
             --primary: #0f6fec;
@@ -691,25 +695,29 @@
             setItem: (key, val) => { memStore[key]=val; try { localStorage.setItem(key, val); } catch(e) {} try { sessionStorage.setItem(key, val); } catch(e) {} },
             removeItem: (key) => { delete memStore[key]; try { localStorage.removeItem(key); } catch(e) {} try { sessionStorage.removeItem(key); } catch(e) {} }
         };
-        const cdns = [
-            'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js',
-            'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js'
-        ];
-        let retries=0; const maxRetries=cdns.length*2;
-        let cdnIndex=0;
         function initDB() {
-            db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {auth:{persistSession:true,storageKey:'healthiq-auth',storage:iframeStorage,autoRefreshToken:true,detectSessionInUrl:true}});
-            document.getElementById('offlineBanner').classList.remove('active');
-            if(typeof appInit==='function') appInit();
+            if(db) return;
+            try {
+                db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {auth:{persistSession:true,storageKey:'healthiq-auth',storage:iframeStorage,autoRefreshToken:true,detectSessionInUrl:true}});
+                const ob=document.getElementById('offlineBanner'); if(ob) ob.classList.remove('active');
+                if(typeof appInit==='function') appInit();
+            } catch(e) { console.error('initDB failed:',e); }
         }
-        function loadSDK() {
-            const s = document.createElement('script');
-            s.src = cdns[cdnIndex % cdns.length];
-            s.onload = initDB;
-            s.onerror = () => { retries++; cdnIndex++; if(retries<maxRetries){setTimeout(loadSDK,1500);}else{document.getElementById('offlineBanner').classList.add('active');showToast('Connection failed. Please refresh.','error');} };
-            document.head.appendChild(s);
-        }
-        loadSDK();
+        // SDK might already be loaded (from head <script>) or still loading
+        let waited=0; const interval=setInterval(()=>{
+            if(window.supabase){clearInterval(interval);initDB();}
+            else if(window.__sdkFailed||waited>15000){
+                clearInterval(interval);
+                // Last resort: try loading from a 3rd CDN
+                const s=document.createElement('script');
+                s.src='https://cdn.skypack.dev/@supabase/supabase-js@2';
+                s.type='module';
+                s.onload=()=>{ if(window.supabase) initDB(); else { const ob=document.getElementById('offlineBanner'); if(ob) ob.classList.add('active'); } };
+                s.onerror=()=>{ const ob=document.getElementById('offlineBanner'); if(ob) ob.classList.add('active'); };
+                document.head.appendChild(s);
+            }
+            waited+=200;
+        },200);
     })();
     function isSupabaseConfigured() { return !!db; }
 
@@ -782,10 +790,20 @@
         const badge=document.getElementById('heroBadge'); if(badge) badge.innerHTML=s.hero_badge||DEFAULT_SETTINGS.hero_badge;
         const title=document.getElementById('heroTitle'); if(title) title.innerHTML=s.hero_title||DEFAULT_SETTINGS.hero_title;
         const desc=document.getElementById('heroDesc'); if(desc) desc.innerHTML=s.hero_description||DEFAULT_SETTINGS.hero_description;
-        // Stats - update targets and re-animate
+        // Stats - update targets, suffix, labels (animation triggered by observer)
         const counters=document.querySelectorAll('.stat-item');
         const statData=[{v:s.stat_1_value,l:s.stat_1_label},{v:s.stat_2_value,l:s.stat_2_label},{v:s.stat_3_value,l:s.stat_3_label},{v:s.stat_4_value,l:s.stat_4_label}];
-        statData.forEach((sd,i)=>{if(counters[i]){const h=counters[i].querySelector('h3'); h.dataset.target=sd.v||'0'; h.dataset.suffix=sd.l.includes('%')?'%':'+'; counters[i].querySelector('p').textContent=sd.l; animateCounter(h);}});
+        statData.forEach((sd,i)=>{
+            if(counters[i]){
+                const h=counters[i].querySelector('h3');
+                const val=(sd.v!=null&&sd.v!=='')?String(sd.v):'0';
+                h.dataset.target=val;
+                h.dataset.suffix=(sd.l||'').includes('%')?'%':'+';
+                counters[i].querySelector('p').textContent=sd.l||'';
+                // Set static value immediately so user always sees a number
+                h.textContent=(+val).toLocaleString()+h.dataset.suffix;
+            }
+        });
         // Courses section
         const ct=document.getElementById('coursesTitle'); if(ct) ct.textContent=s.courses_title||DEFAULT_SETTINGS.courses_title;
         const cs=document.getElementById('coursesSubtitle'); if(cs) cs.textContent=s.courses_subtitle||DEFAULT_SETTINGS.courses_subtitle;
@@ -1613,9 +1631,25 @@
     }
 
     // ===== COUNTERS =====
-    function animateCounter(el) { const tgt=+el.dataset.target; if(!tgt)return; const suffix=el.dataset.suffix||'+'; const start=performance.now(); (function up(now){const p=Math.min((now-start)/2000,1);el.textContent=Math.floor(p*tgt).toLocaleString()+suffix;if(p<1)requestAnimationFrame(up);})(start); }
-    const cObs=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){animateCounter(en.target);cObs.unobserve(en.target);}});},{threshold:0.5});
-    document.querySelectorAll('.counter').forEach(c=>cObs.observe(c));
+    function animateCounter(el) {
+        const tgt=+el.dataset.target;
+        if(!tgt||isNaN(tgt)){ el.textContent='0'+(el.dataset.suffix||''); return; }
+        const suffix=el.dataset.suffix||'+';
+        // Cancel any existing animation on this element
+        if(el._rafId) cancelAnimationFrame(el._rafId);
+        const start=performance.now();
+        const tick=(now)=>{
+            const p=Math.min((now-start)/1500,1);
+            // Ease-out cubic for nicer feel
+            const eased=1-Math.pow(1-p,3);
+            el.textContent=Math.floor(eased*tgt).toLocaleString()+suffix;
+            if(p<1) el._rafId=requestAnimationFrame(tick);
+            else { el._rafId=null; el.textContent=tgt.toLocaleString()+suffix; }
+        };
+        el._rafId=requestAnimationFrame(tick);
+    }
+    const cObs=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){animateCounter(en.target);cObs.unobserve(en.target);}});},{threshold:0.3});
+    // Defer observer setup until after data loaded - done inside appInit
 
     // ===== SCROLL REVEAL =====
     const revealObserver = new IntersectionObserver((entries) => { entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('revealed'); revealObserver.unobserve(e.target); } }); }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
@@ -1629,7 +1663,7 @@
         // Always apply defaults first so page looks good even without network
         for(const k in DEFAULT_SETTINGS){ if(!APP.settings[k]) APP.settings[k]=DEFAULT_SETTINGS[k]; }
         applySettings(); renderCourses(); renderPricingPlans();
-        // Then try to fetch from Supabase
+        // Then try to fetch from Supabase (each independent)
         try { await fetchSettings(); } catch(e){ console.warn('fetchSettings failed:',e); }
         try { await fetchCourses(); } catch(e){ console.warn('fetchCourses failed:',e); }
         try { await initAuth(); } catch(e){ console.warn('initAuth failed:',e); }
@@ -1637,10 +1671,15 @@
             try { await fetchMyEnrollments(); } catch(e){}
             try { await fetchMyOrders(); } catch(e){}
         }
-        // Always re-render everything after all data loaded
+        // Final render with all data
         renderCourses(); renderPricingPlans(); renderTestimonials(); renderFAQs();
-        // Re-animate stats in case they were scrolled past during load
-        document.querySelectorAll('.counter').forEach(c=>{ animateCounter(c); });
+        // Now that targets are finalized, set up counter animation observer
+        document.querySelectorAll('.counter').forEach(c=>{
+            // If already visible (above the fold), animate now
+            const rect=c.getBoundingClientRect();
+            if(rect.top<window.innerHeight&&rect.bottom>0){ animateCounter(c); }
+            else { cObs.observe(c); }
+        });
     }
     async function fetchMyOrders() { if(!APP.currentUser)return; try{const{data,error}=await db.from('orders').select('id,course_id,user_id,status').eq('user_id',APP.currentUser.id); console.log('fetchMyOrders:',{data,error}); if(!error)APP.orders=data||[];}catch(e){console.error('fetchMyOrders error:',e);} }
     </script>
